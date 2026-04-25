@@ -169,7 +169,7 @@
         }
 
         window.changeQty = function(index, change) {
-            let cart = JSON.parse(localStorage.getItem('hisuCart'));
+            let cart = JSON.parse(localStorage.getItem('MintCart'));
             cart[index].quantity += change;
             if (cart[index].quantity <= 0) cart.splice(index, 1);
             localStorage.setItem('MintCart', JSON.stringify(cart));
@@ -271,7 +271,7 @@
             try {
                 // Đẩy dữ liệu lên bảng 'orders'
                 await addDoc(collection(db, "orders"), orderDataToSave);
-                localStorage.removeItem('hisuCart'); // Xóa giỏ
+                localStorage.removeItem('MintCart'); // Xóa giỏ
                 
                 msgEl.style.color = "green";
                 msgEl.innerText = "🎉 Đặt hàng thành công! Cảm ơn bạn.";

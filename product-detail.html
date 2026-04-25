@@ -30,7 +30,7 @@
 
         // Cập nhật giỏ hàng trên Navbar
         function updateCartCount() {
-            let cart = JSON.parse(localStorage.getItem('mintCart')) || [];
+            let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
             document.getElementById('cartCount').innerText = cart.reduce((t, item) => t + item.quantity, 0);
         }
         updateCartCount();
@@ -100,12 +100,12 @@
             const qtyInput = parseInt(document.getElementById('detailQty').value);
             if(qtyInput < 1 || isNaN(qtyInput)) return alert("Số lượng không hợp lệ!");
 
-            let cart = JSON.parse(localStorage.getItem('mintCart')) || [];
+            let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
             const existingItem = cart.find(item => item.id === id);
             if (existingItem) existingItem.quantity += qtyInput; 
             else cart.push({ id, name, price, image, quantity: qtyInput });
             
-            localStorage.setItem('mintCart', JSON.stringify(cart));
+            localStorage.setItem('MintCart', JSON.stringify(cart));
             updateCartCount();
             alert(`Đã thêm ${qtyInput} sản phẩm vào giỏ hàng!`);
         }
