@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng nhập </title>
+
+<style>
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+font-family:Arial;
+}
+.box{
+background:#fff;
+padding:30px;
+border-radius:12px;
+width:320px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+button{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:none;
+background:#e91e63;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+.link{font-size:14px;margin-top:10px}
+#msg{margin-top:10px}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> Đăng nhập</h2>
+
+<input id="email" placeholder="Email">
+<input id="pass" type="password" placeholder="Mật khẩu">
+
+<button onclick="login()">Đăng nhập</button>
+<button onclick="loginGoogle()">Google</button>
+
+<div class="link">
+<a href="#" onclick="resetPass()">Quên mật khẩu?</a>
+</div>
+
+<div id="msg"></div>
+
+<p class="link">
+Chưa có tài khoản? <a href="dangky.html">Đăng ký</a>
+</p>
+</div>
+
+<script type="module">
+import { auth, db } from './js/firebase-config.js';
+import {
+signInWithEmailAndPassword,
+GoogleAuthProvider,
+signInWithPopup,
+sendPasswordResetEmail,
+sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+/* LOGIN */
+window.login=async()=>{
+if(!email.value||!pass.value) return show("❌ Nhập đủ!");
+
+try{
+const res=await signInWithEmailAndPassword(auth,email.value,pass.value);
+const user=res.user;
+
+/* CHỈ CẢNH BÁO */
+if(!user.emailVerified){
+show("⚠️ Bạn chưa xác minh email");
+}else{
+show("✅ Đăng nhập thành công");
+}
+
+redirect(user.uid);
+
+}catch{
+show("❌ Sai tài khoản hoặc mật khẩu");
+}
+}
+
+
+/* GOOGLE */
+window.loginGoogle=async()=>{
+const provider=new GoogleAuthProvider();
+const result=await signInWithPopup(auth,provider);
+const user=result.user;
+
+const ref=doc(db,"users",user.uid);
+const snap=await getDoc(ref);
+
+if(!snap.exists()){
+await setDoc(ref,{
+email:user.email,
+role:"user",
+createdAt:new Date()
+});
+}
+
+redirect(user.uid);
+}
+
+/* RESET PASS */
+window.resetPass=async()=>{
+if(!email.value) return show("Nhập email trước!");
+
+await sendPasswordResetEmail(auth,email.value);
+show("📩 Đã gửi email reset!");
+}
+
+/* REDIRECT */
+async function redirect(uid){
+const snap=await getDoc(doc(db,"users",uid));
+
+if(snap.exists() && snap.data().role==="admin"){
+show("✅ Admin!");
+setTimeout(()=>location.href="admin.html",1000);
+}else{
+show("✅ Thành công!");
+setTimeout(()=>location.href="index.html",1000);
+}
+}
+
+/* MESSAGE */
+function show(t){msg.innerText=t;}
+</script>
+
+</body>
+</html>

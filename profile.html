@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Hồ sơ cá nhân</title>
+
+<style>
+body{font-family:Arial;background:#f4f4f9;padding:20px}
+.box{max-width:500px;margin:auto;background:#fff;padding:20px;border-radius:10px;text-align:center}
+img{width:100px;height:100px;border-radius:50%;object-fit:cover}
+button{margin-top:10px;padding:8px 12px;background:#e91e63;color:#fff;border:none;border-radius:5px}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>👤 Hồ sơ</h2>
+
+<h3 id="email"></h3>
+
+<button onclick="logout()">Đăng xuất</button>
+</div>
+
+<script type="module">
+import { auth } from './js/firebase-config.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+email.innerText=user.email;
+avatar.src=user.photoURL || "https://i.imgur.com/6VBx3io.png";
+}else{
+location.href="dangnhap.html";
+}
+});
+
+window.logout=()=>{
+signOut(auth);
+location.href="index.html";
+}
+</script>
+</body>
+</html>

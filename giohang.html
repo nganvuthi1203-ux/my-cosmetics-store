@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng & Thanh Toán - MINT COSMETICS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* CSS cho Giỏ hàng và Thanh toán */
+        .cart-wrapper { max-width: 1200px; margin: 40px auto; display: flex; gap: 30px; padding: 0 20px; flex-wrap: wrap; }
+        .cart-section { flex: 2; background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: var(--shadow); }
+        .checkout-section { flex: 1; background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: var(--shadow); height: fit-content; border-top: 5px solid var(--primary-color); }
+        .cart-section h2, .checkout-section h2 { color: var(--text-color); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; border-bottom: 1px solid #f1f2f6; text-align: left; vertical-align: middle; }
+        th { color: #636e72; font-weight: 600; text-transform: uppercase; font-size: 0.9rem; }
+        .cart-item-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .qty-btn { background: #f1f2f6; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .qty-btn:hover { background: var(--primary-color); color: white; }
+        .remove-btn { color: #ff4757; cursor: pointer; border: none; background: none; font-weight: bold; transition: 0.2s; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #636e72; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 8px; outline: none; }
+        
+        /* PHẦN CHỌN PHƯƠNG THỨC THANH TOÁN */
+        .payment-methods { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dfe6e9; }
+        .payment-option { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; }
+        .payment-option input { width: auto; margin: 0; }
+        
+        .total-price { font-size: 1.5rem; color: var(--primary-color); font-weight: 800; margin: 20px 0; text-align: center; background: #fff0f5; padding: 15px; border-radius: 8px; }
+        .btn-checkout { background: linear-gradient(135deg, var(--primary-color), #ff4757); color: white; border: none; padding: 15px; width: 100%; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 25px; text-transform: uppercase; }
+        .btn-checkout:disabled { background: #b2bec3; cursor: not-allowed; }
+
+        /* MODAL (CỬA SỔ NỔI) QUÉT MÃ QR */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 16px; width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-content img { width: 100%; max-width: 250px; border-radius: 8px; margin: 15px 0; border: 2px solid #f1f2f6; }
+        .btn-confirm-transfer { background: #00b894; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1rem; }
+        .btn-cancel-transfer { background: #dfe6e9; color: #636e72; border: none; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mint Cosmetics</h1>
+    </header>
+
+    <nav>
+        <div class="nav-links"><a href="index.html">🏠 Tiếp tục mua sắm</a></div>
+        <div class="auth-buttons" id="authSection"></div>
+    </nav>
+
+    <div class="cart-wrapper">
+        <div class="cart-section">
+            <h2>🛒 Chi tiết đơn hàng</h2>
+            <table>
+                <thead>
+                    <tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th><th>Xóa</th></tr>
+                </thead>
+                <tbody id="cartItems"></tbody>
+            </table>
+            <h3 id="emptyCartMsg" style="text-align: center; color: #888; display: none; padding: 40px 0;">Giỏ hàng của bạn đang trống!</h3>
+        </div>
+
+        <div class="checkout-section">
+            <h2>📦 Thông tin giao hàng</h2>
+            <div class="form-group">
+                <label>Họ và tên người nhận:</label>
+                <input type="text" id="cusName" placeholder="VD: Nguyễn Văn A" required>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="tel" id="cusPhone" placeholder="VD: 0987654321" required>
+            </div>
+            <div class="form-group">
+                <label>Địa chỉ nhận hàng:</label>
+                <textarea id="cusAddress" rows="2" placeholder="Số nhà, Phường/Xã..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Phương thức thanh toán:</label>
+                <div class="payment-methods">
+                    <label class="payment-option">
+                        <input type="radio" name="paymentType" value="COD" checked>
+                        Thanh toán khi nhận hàng (COD)
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentType" value="Chuyển khoản">
+                        Chuyển khoản ngân hàng (Quét mã QR)
+                    </label>
+                </div>
+            </div>
+            
+            <div class="total-price">Tổng cộng: <span id="finalTotal">0</span> ₫</div>
+            
+            <button class="btn-checkout" id="btnPlaceOrder">Tiến hành đặt hàng</button>
+            <p id="checkoutMsg" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary-color);">Quét mã để thanh toán</h3>
+            <p style="font-size: 14px; color: #636e72; margin-top: 5px;">Mở app ngân hàng quét mã dưới đây</p>
+            
+            <img id="qrImage" src="" alt="Mã QR Chuyển khoản">
+            
+            <div style="background: #f1f2f6; padding: 10px; border-radius: 8px; text-align: left; font-size: 14px;">
+                <p>Số tiền: <strong id="qrAmount" style="color: red;"></strong></p>
+                <p>Nội dung: <strong id="qrContent"></strong></p>
+            </div>
+
+            <button class="btn-confirm-transfer" id="btnConfirmTransfer">Tôi đã chuyển khoản thành công</button>
+            <button class="btn-cancel-transfer" id="btnCancelTransfer">Hủy / Chọn phương thức khác</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+        let currentUserId = "guest";
+        let grandTotal = 0; // Biến lưu tổng tiền
+
+        onAuthStateChanged(auth, (user) => { if (user) currentUserId = user.uid; });
+
+        // HIỂN THỊ GIỎ HÀNG
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('MintCart')) || [];
+            const tbody = document.getElementById('cartItems');
+            const emptyMsg = document.getElementById('emptyCartMsg');
+            
+            tbody.innerHTML = "";
+            grandTotal = 0;
+
+            if (cart.length === 0) {
+                emptyMsg.style.display = "block";
+                document.getElementById('btnPlaceOrder').disabled = true;
+                document.querySelector('table').style.display = "none";
+            } else {
+                emptyMsg.style.display = "none";
+                document.getElementById('btnPlaceOrder').disabled = false;
+                document.querySelector('table').style.display = "table";
+
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    grandTotal += itemTotal;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${item.image}" class="cart-item-img"> <strong>${item.name}</strong>
+                            </td>
+                            <td>${item.price.toLocaleString('vi-VN')} ₫</td>
+                            <td>
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                                <span style="margin: 0 10px;">${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                            </td>
+                            <td style="color: var(--primary-color); font-weight: bold;">${itemTotal.toLocaleString('vi-VN')} ₫</td>
+                            <td><button class="remove-btn" onclick="removeItem(${index})">Xóa</button></td>
+                        </tr>
+                    `;
+                });
+            }
+            document.getElementById('finalTotal').innerText = grandTotal.toLocaleString('vi-VN');
+        }
+
+        window.changeQty = function(index, change) {
+            let cart = JSON.parse(localStorage.getItem('hisuCart'));
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) cart.splice(index, 1);
+            localStorage.setItem('MintCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        window.removeItem = function(index) {
+            let cart = JSON.parse(localStorage.getItem('MintCart'));
+            cart.splice(index, 1);
+            localStorage.setItem('MintCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        renderCart();
+
+        // --------------------------------------------------------
+        // XỬ LÝ THANH TOÁN & ĐẶT HÀNG
+        // --------------------------------------------------------
+        const btnPlaceOrder = document.getElementById('btnPlaceOrder');
+        const qrModal = document.getElementById('qrModal');
+        let orderDataToSave = {}; // Lưu tạm dữ liệu đơn hàng
+
+        // BƯỚC 1: KHI BẤM "TIẾN HÀNH ĐẶT HÀNG"
+        btnPlaceOrder.addEventListener('click', () => {
+            const name = document.getElementById('cusName').value;
+            const phone = document.getElementById('cusPhone').value;
+            const address = document.getElementById('cusAddress').value;
+            // Lấy phương thức thanh toán đang được chọn
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+
+            if (!name || !phone || !address) {
+                alert("Vui lòng điền đầy đủ thông tin giao hàng!"); return;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('MintCart'));
+            
+            // Chuẩn bị sẵn dữ liệu đơn hàng
+            orderDataToSave = {
+                customerId: currentUserId,
+                customerName: name,
+                customerPhone: phone,
+                customerAddress: address,
+                items: cart, 
+                totalPrice: grandTotal,
+                paymentMethod: paymentType, // Lưu COD hoặc Chuyển khoản
+                status: (paymentType === 'COD') ? "Chờ xử lý" : "Chờ xác nhận thanh toán", 
+                createdAt: new Date()
+            };
+
+            if (paymentType === 'COD') {
+                // Nếu COD: Gửi thẳng lên Firebase
+                submitOrderToFirebase();
+            } else {
+                // Nếu CHUYỂN KHOẢN: Hiện mã QR
+                showQRCode(phone);
+            }
+        });
+
+        // BƯỚC 2: HIỂN THỊ MÃ QR TỰ ĐỘNG
+        function showQRCode(phone) {
+            // CẤU HÌNH NGÂN HÀNG CỦA BẠN TẠI ĐÂY (Thay bằng số tài khoản thật của bạn)
+            const BANK_ID = "MB"; // Tên viết tắt ngân hàng (VD: MB, VCB, ACB, TPB...)
+            const ACCOUNT_NO = "0365467504"; // Số tài khoản của bạn
+            const ACCOUNT_NAME = "VU THI TUYET NGAN"; // Tên chủ tài khoản
+            
+            // Tạo mã đơn hàng ngẫu nhiên làm nội dung chuyển khoản
+            const orderCode = "DH" + Math.floor(Math.random() * 10000); 
+            const transferContent = `${orderCode} ${phone}`; // Nội dung CK: DH1234 0987...
+
+            // Sử dụng API của VietQR để tự động tạo ảnh QR
+            const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact.png?amount=${grandTotal}&addInfo=${transferContent}&accountName=${ACCOUNT_NAME}`;
+
+            document.getElementById('qrImage').src = qrUrl;
+            document.getElementById('qrAmount').innerText = grandTotal.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('qrContent').innerText = transferContent;
+            
+            // Hiển thị Modal
+            qrModal.style.display = 'flex';
+        }
+
+        // BƯỚC 3: XÁC NHẬN ĐÃ CHUYỂN KHOẢN & GỬI LÊN FIREBASE
+        document.getElementById('btnConfirmTransfer').addEventListener('click', () => {
+            qrModal.style.display = 'none'; // Đóng modal
+            submitOrderToFirebase(); // Gửi đơn hàng
+        });
+
+        // Bấm Hủy QR
+        document.getElementById('btnCancelTransfer').addEventListener('click', () => {
+            qrModal.style.display = 'none';
+        });
+
+        // HÀM CHUNG: GỬI ĐƠN LÊN FIREBASE
+        async function submitOrderToFirebase() {
+            const msgEl = document.getElementById('checkoutMsg');
+            msgEl.style.color = "blue";
+            msgEl.innerText = "Đang gửi đơn hàng lên hệ thống...";
+            btnPlaceOrder.disabled = true;
+
+            try {
+                // Đẩy dữ liệu lên bảng 'orders'
+                await addDoc(collection(db, "orders"), orderDataToSave);
+                localStorage.removeItem('hisuCart'); // Xóa giỏ
+                
+                msgEl.style.color = "green";
+                msgEl.innerText = "🎉 Đặt hàng thành công! Cảm ơn bạn.";
+                
+                setTimeout(() => {
+                    alert("Cửa hàng đã nhận được đơn của bạn!");
+                    window.location.href = "index.html";
+                }, 2000);
+
+            } catch (error) {
+                msgEl.style.color = "red";
+                msgEl.innerText = "❌ Có lỗi xảy ra, vui lòng thử lại.";
+                btnPlaceOrder.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

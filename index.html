@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint Cosmetics - Thiên Đường Mỹ Phẩm Chính Hãng</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* CSS BỔ SUNG CHO TÍNH NĂNG MỚI (Khỏi cần sửa file style.css) */
+        
+        /* Thanh danh mục bám dính ở đầu trang */
+        .top-category-bar {
+            position: sticky;
+            top: 70px; /* Nằm ngay dưới Navbar */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-top: 1px solid #f1f2f6;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--text-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Tiêu đề từng khu vực */
+        .section-header {
+            text-align: center;
+            margin: 60px 0 30px 0;
+        }
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            position: relative;
+        }
+        .section-header h2::after {
+            content: '';
+            width: 50%;
+            height: 4px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            border-radius: 2px;
+        }
+        
+        /* CSS Riêng cho nút Admin */
+        .btn-admin {
+            background: linear-gradient(135deg, #0984e3, #74b9ff) !important;
+            color: white !important;
+            border: none !important;
+        }
+        .btn-admin:hover {
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mint Cosmetics</h1>
+        <p>Lưu giữ nét thanh xuân - Tôn vinh vẻ đẹp tự nhiên</p>
+    </header>
+
+    <nav style="top: 0;">
+        <div class="nav-links">
+            <a href="index.html">🏠 Trang chủ</a>
+            <a href="#featured-section">🌟 Nổi bật</a>
+            <a href="giohang.html" id="cartLink">🛒 Giỏ hàng (<span id="cartCount">0</span>)</a>
+        </div>
+        <div class="auth-buttons" id="authSection">
+            <button onclick="window.location.href='dangnhap.html'">Đăng nhập</button>
+            <button onclick="window.location.href='dangky.html'">Đăng ký</button>
+        </div>
+    </nav>
+
+    <div class="top-category-bar" id="categoryFilter">
+        <button class="filter-btn active" onclick="filterProducts('Tất cả', this)">Tất cả</button>
+        <button class="filter-btn" onclick="filterProducts('Trang điểm', this)">Trang điểm</button>
+        <button class="filter-btn" onclick="filterProducts('Chăm sóc cơ thể', this)">Chăm sóc cơ thể</button>
+        <button class="filter-btn" onclick="filterProducts('Nước hoa', this)">Nước hoa</button>
+        <button class="filter-btn" onclick="filterProducts('Chăm sóc tóc', this)">Chăm sóc tóc</button>
+    </div>
+
+    <div class="hero">
+        <h2>Tỏa sáng cùng Mint Cosmetics </h2>
+        <p>Khám phá bộ sưu tập mỹ phẩm chính hãng mới nhất. Chăm sóc làn da hoàn hảo từ sâu bên trong với các thương hiệu hàng đầu.</p>
+        <button class="btn-shop-now" onclick="document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'})">Mua sắm ngay</button>
+    </div>
+
+    <div class="section-header" id="featured-section">
+        <h2>🌟 Sản Phẩm Nổi Bật</h2>
+    </div>
+    <div class="products-grid" id="featuredContainer">
+        </div>
+
+    <div class="section-header" id="all-products-section">
+        <h2>🛍️ Cửa Hàng Của Mint Cosmetics</h2>
+    </div>
+    <div class="products-grid" id="productContainer">
+        <h3 style="width: 100%; text-align: center; color: #888;">Đang tải dữ liệu sản phẩm từ hệ thống...</h3>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 style="color: white; font-size: 1.5rem; letter-spacing: 1px;">MINT COSMETICS</h3>
+                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng. Mang đến cho bạn sự tự tin và rạng rỡ mỗi ngày.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Thông tin liên hệ</h3>
+                <p>📍 <strong>Địa chỉ:</strong> Kiến Hưng, TP. Hải Phòng</p>
+                <p>📞 <strong>Hotline:</strong> 0336.326.305 (Zalo/Viber)</p>
+                <p>✉️ <strong>Email:</strong> nganvuthi1203@gmail.com</p>
+                <p>⏰ <strong>Mở cửa:</strong> 08:00 - 22:00 (Tất cả các ngày)</p>
+            </div>
+            <div class="footer-col">
+                <h3>Chính sách & Hỗ trợ</h3>
+                <ul>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách đổi trả, hoàn tiền</a></li>
+                    <li><a href="#">Chính sách bảo mật thông tin</a></li>
+                    <li><a href="#">Hướng dẫn mua hàng & thanh toán</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Mint Cosmetics. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        // Đã bổ sung import getDoc và doc để lấy quyền User
+        import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        let allProducts = []; 
+
+        // 1. Kiểm tra đăng nhập và Quyền (Khách hay Admin)
+        onAuthStateChanged(auth, async (user) => {
+            const authSection = document.getElementById('authSection');
+            if (user) {
+                // Mặc định hiện lời chào và nút đăng xuất
+                authSection.innerHTML = `
+                    <span style="margin-right: 15px; font-weight: bold;">Chào, ${user.email}</span>
+                    <button class="logout" id="btnLogout">Đăng xuất</button>
+                `;
+                
+                // Lệnh đăng xuất
+                document.getElementById('btnLogout').addEventListener('click', async () => {
+                    await signOut(auth);
+                    window.location.reload();
+                });
+
+                // KIỂM TRA QUYỀN ADMIN TỪ FIRESTORE
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists() && docSnap.data().role === "admin") {
+                        // Nếu là admin, tạo nút "Quản trị Admin" và chèn vào bên cạnh nút Đăng xuất
+                        const adminBtn = document.createElement('button');
+                        adminBtn.innerText = "⚙️ Quản trị Admin";
+                        adminBtn.className = "btn-admin"; // Gắn class css màu xanh
+                        adminBtn.onclick = () => window.location.href = 'admin.html';
+                        
+                        // Chèn nút Admin lên trước nút Đăng xuất
+                        authSection.insertBefore(adminBtn, document.getElementById('btnLogout'));
+                    }
+                } catch (error) {
+                    console.error("Lỗi kiểm tra quyền: ", error);
+                }
+
+            } else {
+                // Nếu chưa đăng nhập, hiển thị nút Đăng nhập / Đăng ký
+                authSection.innerHTML = `
+                    <button onclick="window.location.href='dangnhap.html'">Đăng nhập</button>
+                    <button onclick="window.location.href='dangky.html'">Đăng ký</button>
+                `;
+            }
+        });
+
+        // 2. Tải toàn bộ dữ liệu từ Firebase
+        async function loadProducts() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
+                
+                allProducts = []; 
+                querySnapshot.forEach((doc) => {
+                    allProducts.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sắp xếp sản phẩm mới nhất lên đầu (Dựa vào thời gian tạo)
+                allProducts.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+
+                // Hiển thị phần "Sản phẩm nổi bật" (Lấy 4 sản phẩm mới nhất)
+                renderFeatured();
+
+                // Hiển thị "Tất cả sản phẩm"
+                renderProducts('Tất cả'); 
+                
+            } catch (error) {
+                console.error("Lỗi:", error);
+                document.getElementById('productContainer').innerHTML = "<p style='color:red;'>Lỗi tải dữ liệu.</p>";
+            }
+        }
+
+        // 3. Hàm hiển thị Sản phẩm nổi bật
+        function renderFeatured() {
+            const featuredContainer = document.getElementById('featuredContainer');
+            featuredContainer.innerHTML = "";
+            
+            // Lấy tối đa 4 sản phẩm đầu tiên
+            const featuredList = allProducts.slice(0, 4);
+            
+            if(featuredList.length === 0) {
+                featuredContainer.innerHTML = "<p>Chưa có sản phẩm nổi bật.</p>";
+                return;
+            }
+
+            featuredList.forEach(product => {
+                featuredContainer.appendChild(createProductCard(product));
+            });
+        }
+
+        // 4. Hàm hiển thị Tất cả sản phẩm (Có bộ lọc)
+        function renderProducts(categoryFilter) {
+            const container = document.getElementById('productContainer');
+            container.innerHTML = ""; 
+
+            // Lọc theo danh mục
+            const filteredProducts = allProducts.filter(product => {
+                if (categoryFilter === 'Tất cả') return true;
+                const prodCategory = product.category || 'Chăm sóc da'; 
+                return prodCategory === categoryFilter;
+            });
+
+            if(filteredProducts.length === 0) {
+                container.innerHTML = `<h3 style="width: 100%; text-align: center; color: #888; padding: 40px 0;">Đang cập nhật sản phẩm cho danh mục này!</h3>`;
+                return;
+            }
+
+            filteredProducts.forEach((product) => {
+                container.appendChild(createProductCard(product));
+            });
+        }
+
+        // Hàm tạo thẻ HTML cho sản phẩm
+        function createProductCard(product) {
+            const div = document.createElement('div');
+            div.className = 'product-card';
+            div.innerHTML = `
+                <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit; cursor: pointer; flex-grow: 1;">
+                    <img src="${product.imageUrl}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p style="font-size: 12px; color: var(--primary-color); font-weight: bold; margin-bottom: 5px;">${product.category || 'Chưa phân loại'}</p>
+                    <p style="color: #636e72; font-size: 0.9rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        ${product.description || ''}
+                    </p>
+                </a>
+                
+                <div style="margin-top: 15px;">
+                    <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
+                    <button class="btn-add-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
+                        THÊM VÀO GIỎ
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        // 5. Hàm khi khách bấm chọn Danh Mục ở đầu trang
+        window.filterProducts = function(category, btnElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderProducts(category);
+            document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
+        }
+
+        // 6. Xử lý Giỏ hàng
+        window.addToCart = function(id, name, price, image) {
+            let cart = JSON.parse(localStorage.getItem('hisuCart')) || [];
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) existingItem.quantity += 1; 
+            else cart.push({ id, name, price, image, quantity: 1 });
+            
+            localStorage.setItem('hisuCart', JSON.stringify(cart));
+            updateCartCount();
+            alert(`Đã thêm "${name}" vào giỏ hàng!`);
+        }
+
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('hisuCart')) || [];
+            let totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').innerText = totalItems;
+        }
+
+        // BẮT ĐẦU CHẠY
+        loadProducts();
+        updateCartCount();
+
+    </script>
+</body>
+</html>

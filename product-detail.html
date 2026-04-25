@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Sản Phẩm - Mint Cosmetics</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Mint Cosmetics</h1>
+    </header>
+    <nav>
+        <div class="nav-links">
+            <a href="index.html">🏠 Trang chủ</a>
+            <a href="giohang.html" id="cartLink">🛒 Giỏ hàng (<span id="cartCount">0</span>)</a>
+        </div>
+        <div class="auth-buttons" id="authSection"></div>
+    </nav>
+
+    <div class="product-detail-wrapper" id="detailContainer">
+        <h3 style="text-align: center; width: 100%; color: #888; margin-top: 50px;">Đang tải thông tin sản phẩm...</h3>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // Cập nhật giỏ hàng trên Navbar
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('mintCart')) || [];
+            document.getElementById('cartCount').innerText = cart.reduce((t, item) => t + item.quantity, 0);
+        }
+        updateCartCount();
+
+        // Kiểm tra đăng nhập Navbar
+        onAuthStateChanged(auth, (user) => {
+            const authSection = document.getElementById('authSection');
+            if (user) {
+                authSection.innerHTML = `<span style="margin-right: 15px; font-weight: bold;">Chào, ${user.email}</span>`;
+            } else {
+                authSection.innerHTML = `<button onclick="window.location.href='login.html'">Đăng nhập</button>`;
+            }
+        });
+
+        // 1. LẤY ID SẢN PHẨM TỪ ĐƯỜNG LINK (Ví dụ: product-detail.html?id=12345)
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // 2. TẢI DỮ LIỆU SẢN PHẨM ĐÓ
+        async function loadProductDetail() {
+            const container = document.getElementById('detailContainer');
+            
+            if (!productId) {
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Không tìm thấy sản phẩm!</h3>";
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "products", productId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const product = docSnap.data();
+                    
+                    // Vẽ giao diện chi tiết
+                    container.innerHTML = `
+                        <div class="product-image-col">
+                            <img src="${product.imageUrl}" alt="${product.name}">
+                        </div>
+                        <div class="product-info-col">
+                            <span class="badge-category">${product.category || 'Mỹ phẩm'}</span>
+                            <h2>${product.name}</h2>
+                            <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
+                            <p class="desc">${product.description || 'Chưa có thông tin mô tả chi tiết cho sản phẩm này.'}</p>
+                            
+                            <div class="action-row">
+                                <input type="number" id="detailQty" class="qty-input" value="1" min="1">
+                                <button class="btn-add-detail" onclick="addDetailToCart('${productId}', '${product.name}', ${product.price}, '${product.imageUrl}')">
+                                    Thêm Vào Giỏ Hàng
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Sản phẩm không tồn tại!</h3>";
+                }
+            } catch (error) {
+                console.error("Lỗi:", error);
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Lỗi tải dữ liệu!</h3>";
+            }
+        }
+
+        loadProductDetail();
+
+        // 3. HÀM THÊM VÀO GIỎ TỪ TRANG CHI TIẾT (Có lấy số lượng khách nhập)
+        window.addDetailToCart = function(id, name, price, image) {
+            const qtyInput = parseInt(document.getElementById('detailQty').value);
+            if(qtyInput < 1 || isNaN(qtyInput)) return alert("Số lượng không hợp lệ!");
+
+            let cart = JSON.parse(localStorage.getItem('mintCart')) || [];
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) existingItem.quantity += qtyInput; 
+            else cart.push({ id, name, price, image, quantity: qtyInput });
+            
+            localStorage.setItem('mintCart', JSON.stringify(cart));
+            updateCartCount();
+            alert(`Đã thêm ${qtyInput} sản phẩm vào giỏ hàng!`);
+        }
+    </script>
+</body>
+</html>

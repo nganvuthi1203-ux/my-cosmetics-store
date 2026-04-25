@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng ký </title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff758c,#ff7eb3);
+}
+
+.box{
+background:rgba(255,255,255,0.2);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:15px;
+width:340px;
+text-align:center;
+color:#fff;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:6px 0;
+border:none;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:none;
+border-radius:6px;
+background:#e91e63;
+color:white;
+cursor:pointer;
+}
+
+.google{
+background:#fff;
+color:#333;
+}
+
+/* PASS STRENGTH */
+#strength{
+font-size:12px;
+text-align:left;
+}
+
+#msg{margin-top:10px}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Đăng ký</h2>
+
+<input id="email" placeholder="Email">
+
+<input type="password" id="pass" placeholder="Mật khẩu">
+<div id="strength"></div>
+
+<input type="password" id="repass" placeholder="Nhập lại mật khẩu">
+
+<button onclick="register()">Đăng ký</button>
+
+<button class="google" onclick="google()">Đăng ký Google</button>
+
+<div id="msg"></div>
+
+<p style="margin-top:10px">
+<a href="dangnhap.html" style="color:white">Đã có tài khoản?</a>
+</p>
+
+</div>
+
+<script type="module">
+import { auth, db } from './js/firebase-config.js';
+import {
+createUserWithEmailAndPassword,
+sendEmailVerification,
+GoogleAuthProvider,
+signInWithPopup,
+fetchSignInMethodsForEmail
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+
+/* PASSWORD STRENGTH */
+pass.oninput=()=>{
+let v=pass.value;
+let strength="Yếu";
+
+if(v.length>8 && /[A-Z]/.test(v) && /[0-9]/.test(v)){
+strength="Mạnh 💪";
+}else if(v.length>=6){
+strength="Trung bình ⚠️";
+}
+
+strengthDiv.innerText="Độ mạnh: "+strength;
+}
+
+const strengthDiv=document.getElementById("strength");
+
+/* CHECK EMAIL EXIST */
+email.onblur=async()=>{
+if(!email.value) return;
+const methods=await fetchSignInMethodsForEmail(auth,email.value);
+if(methods.length>0){
+show("⚠️ Email đã tồn tại!");
+}
+}
+
+/* REGISTER */
+window.register=async()=>{
+if(!email.value||!pass.value||!repass.value){
+return show("❌ Nhập đủ!");
+}
+
+if(pass.value!==repass.value){
+return show("❌ Mật khẩu không khớp");
+}
+
+show("⏳ Đang xử lý...");
+
+try{
+const res=await createUserWithEmailAndPassword(auth,email.value,pass.value);
+const user=res.user;
+
+/* LƯU USER */
+await setDoc(doc(db,"users",user.uid),{
+email:user.email,
+role:"user",
+avatar:"",
+createdAt:new Date()
+});
+
+/* VERIFY */
+await sendEmailVerification(user);
+
+show("📧 Đăng ký thành công! Kiểm tra email");
+
+}catch(e){
+show("❌ "+e.message);
+}
+}
+
+/* GOOGLE */
+window.google=async()=>{
+const provider=new GoogleAuthProvider();
+const result=await signInWithPopup(auth,provider);
+const user=result.user;
+
+await setDoc(doc(db,"users",user.uid),{
+email:user.email,
+role:"user",
+avatar:user.photoURL || "",
+createdAt:new Date()
+});
+
+location.href="index.html";
+}
+
+/* MESSAGE */
+function show(t){
+msg.innerText=t;
+}
+</script>
+
+</body>
+</html>
