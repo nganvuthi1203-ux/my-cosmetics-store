@@ -6,12 +6,10 @@
     <title>Mint Cosmetics - Thiên Đường Mỹ Phẩm Chính Hãng</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* CSS BỔ SUNG CHO TÍNH NĂNG MỚI (Khỏi cần sửa file style.css) */
-        
-        /* Thanh danh mục bám dính ở đầu trang */
+        /* CSS BỔ SUNG */
         .top-category-bar {
             position: sticky;
-            top: 70px; /* Nằm ngay dưới Navbar */
+            top: 70px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             z-index: 999;
@@ -43,11 +41,7 @@
             transform: translateY(-2px);
         }
 
-        /* Tiêu đề từng khu vực */
-        .section-header {
-            text-align: center;
-            margin: 60px 0 30px 0;
-        }
+        .section-header { text-align: center; margin: 60px 0 30px 0; }
         .section-header h2 {
             font-size: 2.2rem;
             color: var(--text-color);
@@ -67,15 +61,28 @@
             border-radius: 2px;
         }
         
-        /* CSS Riêng cho nút Admin */
         .btn-admin {
             background: linear-gradient(135deg, #0984e3, #74b9ff) !important;
             color: white !important;
             border: none !important;
         }
-        .btn-admin:hover {
-            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4);
-            transform: translateY(-2px);
+
+        /* Thống nhất phong cách bộ lọc giá */
+        .sort-container {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        #sortPrice {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            outline: none;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
         }
     </style>
 </head>
@@ -121,209 +128,209 @@
     <div class="section-header" id="all-products-section">
         <h2>🛍️ Cửa Hàng Của Mint Cosmetics</h2>
     </div>
-    <div class="products-grid" id="productContainer">
-        <h3 style="width: 100%; text-align: center; color: #888;">Đang tải dữ liệu sản phẩm từ hệ thống...</h3>
+
+    <div class="sort-container">
+        <select id="sortPrice" onchange="sortProducts()">
+            <option value="default">Sắp xếp: Mới nhất</option>
+            <option value="lowToHigh">Giá: Thấp đến Cao</option>
+            <option value="highToLow">Giá: Cao đến Thấp</option>
+        </select>
     </div>
 
-    <footer>
+    <div class="products-grid" id="productContainer">
+        <h3 style="width: 100%; text-align: center; color: #888;">Đang tải dữ liệu sản phẩm...</h3>
+    </div>
+
+   <footer>
+
         <div class="footer-container">
+
             <div class="footer-col">
+
                 <h3 style="color: white; font-size: 1.5rem; letter-spacing: 1px;">MINT COSMETICS</h3>
-                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng. Mang đến cho bạn sự tự tin và rạng rỡ mỗi ngày.</p>
+
+                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng. Mang đến cho bạn sự tự tin và rạng rỡ mỗi ngày. Hãy cùng Mint trải nghiệm các sản phẩm uy tín-chất lượng nhé! <p></p>
+
             </div>
+
             <div class="footer-col">
+
                 <h3>Thông tin liên hệ</h3>
+
                 <p>📍 <strong>Địa chỉ:</strong> Kiến Hưng, TP. Hải Phòng</p>
+
                 <p>📞 <strong>Hotline:</strong> 0336.326.305 (Zalo/Viber)</p>
+
                 <p>✉️ <strong>Email:</strong> nganvuthi1203@gmail.com</p>
+
                 <p>⏰ <strong>Mở cửa:</strong> 08:00 - 22:00 (Tất cả các ngày)</p>
+
             </div>
+
             <div class="footer-col">
+
                 <h3>Chính sách & Hỗ trợ</h3>
+
                 <ul>
+
                     <li><a href="#">Chính sách giao hàng</a></li>
+
                     <li><a href="#">Chính sách đổi trả, hoàn tiền</a></li>
+
                     <li><a href="#">Chính sách bảo mật thông tin</a></li>
+
                     <li><a href="#">Hướng dẫn mua hàng & thanh toán</a></li>
+
                 </ul>
+
             </div>
+
         </div>
+
         <div class="footer-bottom">
+
             <p>&copy; 2026 Mint Cosmetics. Bảo lưu mọi quyền.</p>
+
         </div>
+
     </footer>
 
     <script type="module">
         import { auth, db } from './js/firebase-config.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-        // Đã bổ sung import getDoc và doc để lấy quyền User
         import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         let allProducts = []; 
 
-        // 1. Kiểm tra đăng nhập và Quyền (Khách hay Admin)
         onAuthStateChanged(auth, async (user) => {
             const authSection = document.getElementById('authSection');
             if (user) {
-                // Mặc định hiện lời chào và nút đăng xuất
                 authSection.innerHTML = `
                     <span style="margin-right: 15px; font-weight: bold;">Chào, ${user.email}</span>
                     <button class="logout" id="btnLogout">Đăng xuất</button>
                 `;
-                
-                // Lệnh đăng xuất
                 document.getElementById('btnLogout').addEventListener('click', async () => {
                     await signOut(auth);
                     window.location.reload();
                 });
 
-                // KIỂM TRA QUYỀN ADMIN TỪ FIRESTORE
                 try {
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
-                    
                     if (docSnap.exists() && docSnap.data().role === "admin") {
-                        // Nếu là admin, tạo nút "Quản trị Admin" và chèn vào bên cạnh nút Đăng xuất
                         const adminBtn = document.createElement('button');
                         adminBtn.innerText = "⚙️ Quản trị Admin";
-                        adminBtn.className = "btn-admin"; // Gắn class css màu xanh
+                        adminBtn.className = "btn-admin";
                         adminBtn.onclick = () => window.location.href = 'admin.html';
-                        
-                        // Chèn nút Admin lên trước nút Đăng xuất
                         authSection.insertBefore(adminBtn, document.getElementById('btnLogout'));
                     }
-                } catch (error) {
-                    console.error("Lỗi kiểm tra quyền: ", error);
-                }
-
-            } else {
-                // Nếu chưa đăng nhập, hiển thị nút Đăng nhập / Đăng ký
-                authSection.innerHTML = `
-                    <button onclick="window.location.href='dangnhap.html'">Đăng nhập</button>
-                    <button onclick="window.location.href='dangky.html'">Đăng ký</button>
-                `;
+                } catch (e) {}
             }
         });
 
-        // 2. Tải toàn bộ dữ liệu từ Firebase
         async function loadProducts() {
             try {
                 const querySnapshot = await getDocs(collection(db, "products"));
-                
                 allProducts = []; 
                 querySnapshot.forEach((doc) => {
                     allProducts.push({ id: doc.id, ...doc.data() });
                 });
-
-                // Sắp xếp sản phẩm mới nhất lên đầu (Dựa vào thời gian tạo)
-                allProducts.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
-
-                // Hiển thị phần "Sản phẩm nổi bật" (Lấy 4 sản phẩm mới nhất)
-                renderFeatured();
-
-                // Hiển thị "Tất cả sản phẩm"
-                renderProducts('Tất cả'); 
                 
+                // Mặc định sắp xếp mới nhất
+                allProducts.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+
+                renderFeatured(); // Hiện sản phẩm nổi bật bạn chọn
+                renderProducts('Tất cả'); // Hiện tất cả
             } catch (error) {
-                console.error("Lỗi:", error);
-                document.getElementById('productContainer').innerHTML = "<p style='color:red;'>Lỗi tải dữ liệu.</p>";
+                document.getElementById('productContainer').innerHTML = "Lỗi tải dữ liệu.";
             }
         }
 
-        // 3. Hàm hiển thị Sản phẩm nổi bật
+        // CHỈ HIỆN SẢN PHẨM CÓ ĐÁNH DẤU NỔI BẬT
         function renderFeatured() {
-            const featuredContainer = document.getElementById('featuredContainer');
-            featuredContainer.innerHTML = "";
-            
-            // Lấy tối đa 4 sản phẩm đầu tiên
-            const featuredList = allProducts.slice(0, 4);
+            const container = document.getElementById('featuredContainer');
+            container.innerHTML = "";
+            const featuredList = allProducts.filter(p => p.isFeatured === true);
             
             if(featuredList.length === 0) {
-                featuredContainer.innerHTML = "<p>Chưa có sản phẩm nổi bật.</p>";
+                container.innerHTML = "<p style='width:100%; text-align:center; color:#999;'>Chưa có sản phẩm nổi bật nào được chọn.</p>";
                 return;
             }
-
-            featuredList.forEach(product => {
-                featuredContainer.appendChild(createProductCard(product));
-            });
+            featuredList.forEach(p => container.appendChild(createProductCard(p)));
         }
 
-        // 4. Hàm hiển thị Tất cả sản phẩm (Có bộ lọc)
         function renderProducts(categoryFilter) {
             const container = document.getElementById('productContainer');
             container.innerHTML = ""; 
 
-            // Lọc theo danh mục
-            const filteredProducts = allProducts.filter(product => {
+            const filtered = allProducts.filter(p => {
                 if (categoryFilter === 'Tất cả') return true;
-                const prodCategory = product.category || 'Chăm sóc da'; 
-                return prodCategory === categoryFilter;
+                return (p.category || 'Chăm sóc da') === categoryFilter;
             });
 
-            if(filteredProducts.length === 0) {
-                container.innerHTML = `<h3 style="width: 100%; text-align: center; color: #888; padding: 40px 0;">Đang cập nhật sản phẩm cho danh mục này!</h3>`;
+            if(filtered.length === 0) {
+                container.innerHTML = `<h3 style="width: 100%; text-align: center; color: #888;">Trống...</h3>`;
                 return;
             }
-
-            filteredProducts.forEach((product) => {
-                container.appendChild(createProductCard(product));
-            });
+            filtered.forEach(p => container.appendChild(createProductCard(p)));
         }
 
-        // Hàm tạo thẻ HTML cho sản phẩm
         function createProductCard(product) {
             const div = document.createElement('div');
             div.className = 'product-card';
             div.innerHTML = `
-                <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit; cursor: pointer; flex-grow: 1;">
+                <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit;">
                     <img src="${product.imageUrl}" alt="${product.name}">
                     <h3>${product.name}</h3>
-                    <p style="font-size: 12px; color: var(--primary-color); font-weight: bold; margin-bottom: 5px;">${product.category || 'Chưa phân loại'}</p>
-                    <p style="color: #636e72; font-size: 0.9rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                        ${product.description || ''}
-                    </p>
+                    <p style="font-size: 12px; color: var(--primary-color); font-weight: bold;">${product.category || 'Chưa phân loại'}</p>
                 </a>
-                
                 <div style="margin-top: 15px;">
                     <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
-                    <button class="btn-add-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
-                        THÊM VÀO GIỎ
-                    </button>
+                    <button class="btn-add-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">THÊM VÀO GIỎ</button>
                 </div>
             `;
             return div;
         }
 
-        // 5. Hàm khi khách bấm chọn Danh Mục ở đầu trang
-        window.filterProducts = function(category, btnElement) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        // HÀM SẮP XẾP GIÁ
+        window.sortProducts = function() {
+            const sortValue = document.getElementById('sortPrice').value;
+            const activeCategory = document.querySelector('.filter-btn.active').innerText;
+
+            if (sortValue === 'lowToHigh') {
+                allProducts.sort((a, b) => a.price - b.price);
+            } else if (sortValue === 'highToLow') {
+                allProducts.sort((a, b) => b.price - a.price);
+            } else {
+                allProducts.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+            }
+            renderProducts(activeCategory);
+        }
+
+        window.filterProducts = function(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             renderProducts(category);
             document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
         }
 
-        // 6. Xử lý Giỏ hàng
         window.addToCart = function(id, name, price, image) {
             let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
-            const existingItem = cart.find(item => item.id === id);
-            if (existingItem) existingItem.quantity += 1; 
+            const item = cart.find(i => i.id === id);
+            if (item) item.quantity += 1; 
             else cart.push({ id, name, price, image, quantity: 1 });
-            
             localStorage.setItem('MintCart', JSON.stringify(cart));
             updateCartCount();
-            alert(`Đã thêm "${name}" vào giỏ hàng!`);
+            alert(`Đã thêm vào giỏ hàng!`);
         }
 
         function updateCartCount() {
             let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
-            let totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            document.getElementById('cartCount').innerText = totalItems;
+            document.getElementById('cartCount').innerText = cart.reduce((t, i) => t + i.quantity, 0);
         }
 
-        // BẮT ĐẦU CHẠY
         loadProducts();
         updateCartCount();
-
     </script>
 </body>
 </html>

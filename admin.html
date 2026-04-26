@@ -67,6 +67,9 @@
         .badge.cancelled { background: #dfe6e9; color: #636e72; }
         .badge.category { background: #f1f2f6; color: #2d3436; }
         
+        /* Badge mới cho sản phẩm nổi bật */
+        .badge.featured { background: #fff9db; color: #f59f00; border: 1px solid #ffe066; }
+
         .btn-edit { background: #74b9ff; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px; transition: 0.2s; }
         .btn-edit:hover { background: #0984e3; }
         .btn-delete { background: #ff7675; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
@@ -150,14 +153,20 @@
                     <input type="number" id="productPrice" placeholder="Ví dụ: 250000">
                 </div>
                 
-                <div class="form-group full">
+                <div class="form-group">
                     <label>Danh mục sản phẩm</label>
                     <select id="productCategory">
                         <option value="Trang điểm">Trang điểm</option>
                         <option value="Chăm sóc da">Chăm sóc da</option>
                         <option value="Nước hoa">Nước hoa</option>
                         <option value="Chăm sóc cơ thể">Chăm sóc cơ thể</option>
+                        <option value="Chăm sóc tóc">Chăm sóc tóc</option>
                     </select>
+                </div>
+
+                <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; padding-top: 30px;">
+                    <input type="checkbox" id="productFeatured" style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="productFeatured" style="margin-bottom: 0; cursor: pointer;">Đánh dấu là Sản phẩm Nổi bật</label>
                 </div>
 
                 <div class="form-group full">
@@ -181,8 +190,9 @@
                         <th>Hình ảnh</th>
                         <th>Tên sản phẩm</th>
                         <th>Danh mục</th>
-                        <th>Giá bán</th>
-                        <th>Thao tác</th> </tr>
+                        <th>Nổi bật</th> <th>Giá bán</th>
+                        <th>Thao tác</th> 
+                    </tr>
                 </thead>
                 <tbody id="productList"></tbody>
             </table>
@@ -192,7 +202,6 @@
     <script type="module">
         import { auth, db } from './js/firebase-config.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-        // IMPORT THÊM lệnh deleteDoc để xóa sản phẩm
         import { doc, getDoc, collection, addDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         // Biến toàn cục để lưu trữ trạng thái chỉnh sửa
@@ -275,7 +284,7 @@
             const prodSnap = await getDocs(collection(db, "products"));
             document.getElementById('totalProductsCount').innerText = prodSnap.size; 
             
-            allProductsAdmin = []; // Lưu vào biến mảng để dùng cho chức năng Sửa
+            allProductsAdmin = []; 
             const prodTbody = document.getElementById('productList');
             prodTbody.innerHTML = "";
             
@@ -284,11 +293,14 @@
                 allProductsAdmin.push({ id: doc.id, ...data });
                 
                 const categoryName = data.category || 'Chưa phân loại';
+                // Kiểm tra trạng thái nổi bật để hiện Badge ★
+                const featuredHtml = data.isFeatured ? '<span class="badge featured">★ Nổi bật</span>' : '';
                 
                 prodTbody.innerHTML += `<tr>
                     <td><img src="${data.imageUrl}" class="preview"></td>
                     <td><strong>${data.name}</strong><br><span style="color:#b2bec3; font-size:12px; max-width: 200px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${data.description || ''}</span></td>
                     <td><span class="badge category">${categoryName}</span></td>
+                    <td>${featuredHtml}</td>
                     <td style="font-weight:bold; color:#ff6b81;">${data.price.toLocaleString('vi-VN')} ₫</td>
                     <td>
                         <button class="btn-edit" onclick="triggerEditProduct('${doc.id}')">Sửa</button>
@@ -311,71 +323,64 @@
         }
 
         // --- CÁC HÀM XỬ LÝ SỬA & XÓA SẢN PHẨM ---
-        
-        // 1. Kéo dữ liệu cũ lên Form khi bấm nút Sửa
         window.triggerEditProduct = function(id) {
-            // Tìm sản phẩm trong mảng dựa vào ID
             const product = allProductsAdmin.find(p => p.id === id);
             if(!product) return;
 
-            // Bật chế độ Edit
             editingProductId = id;
             
-            // Đổ dữ liệu lên giao diện
             document.getElementById('productName').value = product.name;
             document.getElementById('productPrice').value = product.price;
             document.getElementById('productCategory').value = product.category || 'Trang điểm';
             document.getElementById('productImageUrl').value = product.imageUrl;
             document.getElementById('productDesc').value = product.description || '';
+            // Gán trạng thái cho checkbox nổi bật
+            document.getElementById('productFeatured').checked = product.isFeatured || false;
 
-            // Đổi giao diện form
             document.getElementById('formTitle').innerText = "Cập nhật Sản phẩm";
             document.getElementById('btnSaveProduct').innerText = "Cập nhật thay đổi";
-            document.getElementById('btnSaveProduct').style.background = "#0984e3"; // Đổi màu xanh
+            document.getElementById('btnSaveProduct').style.background = "#0984e3"; 
             document.getElementById('btnCancelEdit').style.display = "inline-block";
             
-            // Tự động cuộn trang lên trên cùng để Admin thấy form
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 2. Hủy thao tác sửa (Quay về chế độ Thêm mới)
         window.cancelEdit = function() {
             editingProductId = null;
-            
             document.getElementById('productName').value = "";
             document.getElementById('productPrice').value = "";
             document.getElementById('productDesc').value = "";
             document.getElementById('productImageUrl').value = "";
             document.getElementById('productCategory').value = "Trang điểm";
+            document.getElementById('productFeatured').checked = false;
 
             document.getElementById('formTitle').innerText = "Thêm Sản phẩm Mới";
             document.getElementById('btnSaveProduct').innerText = "Lưu Sản Phẩm";
-            document.getElementById('btnSaveProduct').style.background = "#ff6b81"; // Trả lại màu hồng
+            document.getElementById('btnSaveProduct').style.background = "#ff6b81"; 
             document.getElementById('btnCancelEdit').style.display = "none";
         }
 
-        // 3. Xóa sản phẩm
         window.triggerDeleteProduct = async function(id) {
             if(confirm("Bạn có chắc chắn muốn xóa sản phẩm này vĩnh viễn không?")) {
                 try {
                     await deleteDoc(doc(db, "products", id));
                     alert("Đã xóa sản phẩm thành công!");
-                    // Nếu đang sửa dở đúng sản phẩm bị xóa thì reset form
                     if(editingProductId === id) cancelEdit();
-                    loadData(); // Tải lại bảng
+                    loadData(); 
                 } catch (error) {
                     alert("Lỗi khi xóa: " + error.message);
                 }
             }
         }
 
-        // --- LƯU HOẶC CẬP NHẬT SẢN PHẨM (Nút chung) ---
+        // --- LƯU HOẶC CẬP NHẬT SẢN PHẨM ---
         document.getElementById('btnSaveProduct').addEventListener('click', async () => {
             const name = document.getElementById('productName').value;
             const price = document.getElementById('productPrice').value;
             const desc = document.getElementById('productDesc').value;
             const imageUrl = document.getElementById('productImageUrl').value; 
             const category = document.getElementById('productCategory').value; 
+            const isFeatured = document.getElementById('productFeatured').checked; // Lấy giá trị checkbox
             const statusMsg = document.getElementById('statusMsg');
 
             if(!name || !price || !imageUrl) return alert("Vui lòng nhập đủ Tên, Giá và Link ảnh!");
@@ -388,26 +393,23 @@
                 price: Number(price), 
                 description: desc, 
                 imageUrl: imageUrl, 
-                category: category
+                category: category,
+                isFeatured: isFeatured // Lưu trạng thái nổi bật
             };
 
             try {
                 if (editingProductId) {
-                    // NẾU ĐANG Ở CHẾ ĐỘ SỬA: Dùng updateDoc
                     await updateDoc(doc(db, "products", editingProductId), productData);
                     statusMsg.innerText = "✅ Cập nhật thành công!";
-                    statusMsg.style.color = "#00b894";
                 } else {
-                    // NẾU LÀ THÊM MỚI: Dùng addDoc (cộng thêm ngày tạo)
                     productData.createdAt = new Date();
                     await addDoc(collection(db, "products"), productData);
                     statusMsg.innerText = "✅ Thêm mới thành công!";
-                    statusMsg.style.color = "#00b894";
                 }
                 
                 setTimeout(() => statusMsg.innerText = "", 3000);
-                cancelEdit(); // Reset form về rỗng
-                loadData(); // Tải lại bảng
+                cancelEdit(); 
+                loadData(); 
                 
             } catch (error) {
                 statusMsg.innerText = "❌ Lỗi: " + error.message;
