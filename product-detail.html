@@ -5,6 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sản Phẩm - Mint Cosmetics</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Bổ sung CSS cho các nút bấm mới */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .btn-buy-now-detail {
+            flex: 1;
+            background: var(--text-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-buy-now-detail:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+        .btn-add-detail-outline {
+            flex: 1;
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-add-detail-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        .qty-input {
+            width: 70px;
+            padding: 12px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: bold;
+            outline: none;
+        }
+
+        /* --- BỔ SUNG: CSS CHO NÚT CHỌN PHÂN LOẠI --- */
+        .variant-btn {
+            padding: 8px 15px;
+            border: 1px solid #dfe6e9;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            color: #636e72;
+            transition: 0.2s;
+        }
+        .variant-btn.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: #fff0f5;
+        }
+    </style>
 </head>
 <body>
 
@@ -41,18 +111,19 @@
             if (user) {
                 authSection.innerHTML = `<span style="margin-right: 15px; font-weight: bold;">Chào, ${user.email}</span>`;
             } else {
-                authSection.innerHTML = `<button onclick="window.location.href='login.html'">Đăng nhập</button>`;
+                authSection.innerHTML = `<button onclick="window.location.href='dangnhap.html'">Đăng nhập</button>`;
             }
         });
 
-        // 1. LẤY ID SẢN PHẨM TỪ ĐƯỜNG LINK (Ví dụ: product-detail.html?id=12345)
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
 
-        // 2. TẢI DỮ LIỆU SẢN PHẨM ĐÓ
+        // BỔ SUNG: Biến toàn cục lưu loại đang được khách chọn
+        window.selectedVariant = null; 
+
+        // 2. TẢI DỮ LIỆU SẢN PHẨM
         async function loadProductDetail() {
             const container = document.getElementById('detailContainer');
-            
             if (!productId) {
                 container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Không tìm thấy sản phẩm!</h3>";
                 return;
@@ -65,7 +136,33 @@
                 if (docSnap.exists()) {
                     const product = docSnap.data();
                     
-                    // Vẽ giao diện chi tiết
+                    // --- BỔ SUNG: LOGIC XỬ LÝ PHÂN LOẠI (NẾU CÓ) ---
+                    let variantHtml = '';
+                    let displayPrice = product.price || 0; // Giá mặc định
+                    
+                    // Gán tạm trạng thái mặc định (Dành cho sản phẩm cũ không có phân loại)
+                    window.selectedVariant = { name: 'Mặc định', price: displayPrice };
+
+                    if (product.variants && product.variants.length > 0) {
+                        // Nếu có nhiều loại, lấy loại đầu tiên làm giá trị mặc định hiển thị
+                        window.selectedVariant = product.variants[0];
+                        displayPrice = product.variants[0].price;
+
+                        let buttonsHtml = product.variants.map((v, index) => {
+                            return `<button class="variant-btn ${index === 0 ? 'active' : ''}" onclick="selectVariant(this, '${v.name}', ${v.price})">${v.name}</button>`;
+                        }).join('');
+
+                        variantHtml = `
+                            <div style="margin: 20px 0;">
+                                <strong style="display:block; margin-bottom:10px; color:#2d3436;">Phân loại (Màu sắc / Dung tích):</strong>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    ${buttonsHtml}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // --- KẾT THÚC LOGIC PHÂN LOẠI ---
+
                     container.innerHTML = `
                         <div class="product-image-col">
                             <img src="${product.imageUrl}" alt="${product.name}">
@@ -73,13 +170,22 @@
                         <div class="product-info-col">
                             <span class="badge-category">${product.category || 'Mỹ phẩm'}</span>
                             <h2>${product.name}</h2>
-                            <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
+                            
+                            <p class="price" id="displayPrice">${displayPrice.toLocaleString('vi-VN')} ₫</p>
+                            
                             <p class="desc">${product.description || 'Chưa có thông tin mô tả chi tiết cho sản phẩm này.'}</p>
+                            
+                            ${variantHtml}
                             
                             <div class="action-row">
                                 <input type="number" id="detailQty" class="qty-input" value="1" min="1">
-                                <button class="btn-add-detail" onclick="addDetailToCart('${productId}', '${product.name}', ${product.price}, '${product.imageUrl}')">
-                                    Thêm Vào Giỏ Hàng
+                                
+                                <button class="btn-buy-now-detail" onclick="buyNowDetail('${productId}', '${product.name}', '${product.imageUrl}')">
+                                    MUA NGAY
+                                </button>
+
+                                <button class="btn-add-detail-outline" onclick="addDetailToCart('${productId}', '${product.name}', '${product.imageUrl}')">
+                                    THÊM GIỎ HÀNG
                                 </button>
                             </div>
                         </div>
@@ -88,22 +194,75 @@
                     container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Sản phẩm không tồn tại!</h3>";
                 }
             } catch (error) {
-                console.error("Lỗi:", error);
                 container.innerHTML = "<h3 style='text-align:center; width:100%; color:red;'>Lỗi tải dữ liệu!</h3>";
             }
         }
 
         loadProductDetail();
 
-        // 3. HÀM THÊM VÀO GIỎ TỪ TRANG CHI TIẾT (Có lấy số lượng khách nhập)
-        window.addDetailToCart = function(id, name, price, image) {
+        // --- BỔ SUNG: HÀM KHI KHÁCH BẤM CHỌN LOẠI SẢN PHẨM ---
+        window.selectVariant = function(btnElement, vName, vPrice) {
+            // Xóa viền đỏ ở tất cả các nút
+            document.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
+            // Thêm viền đỏ vào nút vừa bấm
+            btnElement.classList.add('active');
+            
+            // Cập nhật biến toàn cục
+            window.selectedVariant = { name: vName, price: vPrice };
+            
+            // Cập nhật giá tiền hiển thị ra màn hình
+            document.getElementById('displayPrice').innerText = vPrice.toLocaleString('vi-VN') + ' ₫';
+        }
+
+        // 3. HÀM MUA NGAY (ĐÃ SỬA ĐỂ LẤY PHÂN LOẠI)
+        window.buyNowDetail = function(id, baseName, image) {
+            const qtyInput = parseInt(document.getElementById('detailQty').value) || 1;
+            
+            // Lấy tên và giá theo phân loại khách đang chọn
+            const vName = window.selectedVariant.name;
+            const finalPrice = window.selectedVariant.price;
+            const finalName = vName !== 'Mặc định' ? `${baseName} (${vName})` : baseName;
+
+            const item = { 
+                id: id, 
+                name: finalName, 
+                price: finalPrice, 
+                image: image, 
+                quantity: qtyInput,
+                variant: vName // Lưu thêm thuộc tính variant để giỏ hàng phân biệt
+            };
+            
+            localStorage.setItem('MintCart', JSON.stringify([item]));
+            window.location.href = 'giohang.html';
+        }
+
+        // 4. HÀM THÊM VÀO GIỎ (ĐÃ SỬA ĐỂ LẤY PHÂN LOẠI)
+        window.addDetailToCart = function(id, baseName, image) {
             const qtyInput = parseInt(document.getElementById('detailQty').value);
             if(qtyInput < 1 || isNaN(qtyInput)) return alert("Số lượng không hợp lệ!");
 
+            // Lấy tên và giá theo phân loại khách đang chọn
+            const vName = window.selectedVariant.name;
+            const finalPrice = window.selectedVariant.price;
+            const finalName = vName !== 'Mặc định' ? `${baseName} (${vName})` : baseName;
+
             let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
-            const existingItem = cart.find(item => item.id === id);
-            if (existingItem) existingItem.quantity += qtyInput; 
-            else cart.push({ id, name, price, image, quantity: qtyInput });
+            
+            // Tìm trong giỏ hàng xem có món nào trùng ID và TRÙNG CẢ PHÂN LOẠI không
+            const existingItem = cart.find(item => item.id === id && item.variant === vName);
+            
+            if (existingItem) {
+                existingItem.quantity += qtyInput; 
+            } else {
+                cart.push({ 
+                    id: id, 
+                    name: finalName, 
+                    price: finalPrice, 
+                    image: image, 
+                    quantity: qtyInput,
+                    variant: vName 
+                });
+            }
             
             localStorage.setItem('MintCart', JSON.stringify(cart));
             updateCartCount();

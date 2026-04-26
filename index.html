@@ -67,7 +67,6 @@
             border: none !important;
         }
 
-        /* Thống nhất phong cách bộ lọc giá */
         .sort-container {
             max-width: 1200px;
             margin: 0 auto 20px auto;
@@ -83,6 +82,42 @@
             font-weight: 600;
             color: var(--text-color);
             cursor: pointer;
+        }
+
+        /* Tùy chỉnh nút Mua Ngay và Giỏ hàng */
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn-quick-buy {
+            background: var(--text-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-quick-buy:hover {
+            background: #000;
+            transform: scale(1.02);
+        }
+        .btn-add-cart-outline {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-add-cart-outline:hover {
+            background: var(--primary-color);
+            color: white;
         }
     </style>
 </head>
@@ -122,8 +157,7 @@
     <div class="section-header" id="featured-section">
         <h2>🌟 Sản Phẩm Nổi Bật</h2>
     </div>
-    <div class="products-grid" id="featuredContainer">
-        </div>
+    <div class="products-grid" id="featuredContainer"></div>
 
     <div class="section-header" id="all-products-section">
         <h2>🛍️ Cửa Hàng Của Mint Cosmetics</h2>
@@ -141,58 +175,28 @@
         <h3 style="width: 100%; text-align: center; color: #888;">Đang tải dữ liệu sản phẩm...</h3>
     </div>
 
-   <footer>
-
+    <footer>
         <div class="footer-container">
-
             <div class="footer-col">
-
                 <h3 style="color: white; font-size: 1.5rem; letter-spacing: 1px;">MINT COSMETICS</h3>
-
-                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng. Mang đến cho bạn sự tự tin và rạng rỡ mỗi ngày. Hãy cùng Mint trải nghiệm các sản phẩm uy tín-chất lượng nhé! <p></p>
-
+                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng.</p>
             </div>
-
             <div class="footer-col">
-
                 <h3>Thông tin liên hệ</h3>
-
-                <p>📍 <strong>Địa chỉ:</strong> Kiến Hưng, TP. Hải Phòng</p>
-
-                <p>📞 <strong>Hotline:</strong> 0336.326.305 (Zalo/Viber)</p>
-
-                <p>✉️ <strong>Email:</strong> nganvuthi1203@gmail.com</p>
-
-                <p>⏰ <strong>Mở cửa:</strong> 08:00 - 22:00 (Tất cả các ngày)</p>
-
+                <p>📍 Kiến Hưng, TP. Hải Phòng</p>
+                <p>📞 0336.326.305</p>
             </div>
-
             <div class="footer-col">
-
                 <h3>Chính sách & Hỗ trợ</h3>
-
                 <ul>
-
                     <li><a href="#">Chính sách giao hàng</a></li>
-
-                    <li><a href="#">Chính sách đổi trả, hoàn tiền</a></li>
-
-                    <li><a href="#">Chính sách bảo mật thông tin</a></li>
-
-                    <li><a href="#">Hướng dẫn mua hàng & thanh toán</a></li>
-
+                    <li><a href="#">Chính sách đổi trả</a></li>
                 </ul>
-
             </div>
-
         </div>
-
         <div class="footer-bottom">
-
             <p>&copy; 2026 Mint Cosmetics. Bảo lưu mọi quyền.</p>
-
         </div>
-
     </footer>
 
     <script type="module">
@@ -236,17 +240,15 @@
                     allProducts.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Mặc định sắp xếp mới nhất
-                allProducts.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+                allProducts.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
 
-                renderFeatured(); // Hiện sản phẩm nổi bật bạn chọn
-                renderProducts('Tất cả'); // Hiện tất cả
+                renderFeatured();
+                renderProducts('Tất cả');
             } catch (error) {
                 document.getElementById('productContainer').innerHTML = "Lỗi tải dữ liệu.";
             }
         }
 
-        // CHỈ HIỆN SẢN PHẨM CÓ ĐÁNH DẤU NỔI BẬT
         function renderFeatured() {
             const container = document.getElementById('featuredContainer');
             container.innerHTML = "";
@@ -284,15 +286,28 @@
                     <h3>${product.name}</h3>
                     <p style="font-size: 12px; color: var(--primary-color); font-weight: bold;">${product.category || 'Chưa phân loại'}</p>
                 </a>
-                <div style="margin-top: 15px;">
+                <div class="card-actions">
                     <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
-                    <button class="btn-add-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">THÊM VÀO GIỎ</button>
+                    
+                    <button class="btn-quick-buy" onclick="buyNow('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
+                        MUA NGAY
+                    </button>
+
+                    <button class="btn-add-cart-outline" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
+                        THÊM GIỎ HÀNG
+                    </button>
                 </div>
             `;
             return div;
         }
 
-        // HÀM SẮP XẾP GIÁ
+        // HÀM MUA NGAY: Đẩy thẳng sang trang giỏ hàng với 1 sản phẩm duy nhất
+        window.buyNow = function(id, name, price, image) {
+            const item = { id, name, price, image, quantity: 1 };
+            localStorage.setItem('MintCart', JSON.stringify([item]));
+            window.location.href = 'giohang.html';
+        }
+
         window.sortProducts = function() {
             const sortValue = document.getElementById('sortPrice').value;
             const activeCategory = document.querySelector('.filter-btn.active').innerText;
@@ -302,7 +317,7 @@
             } else if (sortValue === 'highToLow') {
                 allProducts.sort((a, b) => b.price - a.price);
             } else {
-                allProducts.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+                allProducts.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
             }
             renderProducts(activeCategory);
         }
