@@ -2,88 +2,182 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Đăng ký </title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký - Mint Cosmetics</title>
+<link rel="stylesheet" href="css/style.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Quicksand:wght@500;600;700&display=swap');
 
-body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(135deg,#ff758c,#ff7eb3);
-}
+    body {
+        font-family: 'Quicksand', sans-serif;
+        background-color: #fff0f5; 
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+    }
 
-.box{
-background:rgba(255,255,255,0.2);
-backdrop-filter:blur(15px);
-padding:30px;
-border-radius:15px;
-width:340px;
-text-align:center;
-color:#fff;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
+    .auth-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+        background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    }
 
-input{
-width:100%;
-padding:10px;
-margin:6px 0;
-border:none;
-border-radius:6px;
-}
+    .auth-box {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 40px 30px;
+        border-radius: 25px;
+        width: 100%;
+        max-width: 380px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(255, 107, 129, 0.15);
+        border: 2px solid #fff;
+    }
 
-button{
-width:100%;
-padding:10px;
-margin-top:5px;
-border:none;
-border-radius:6px;
-background:#e91e63;
-color:white;
-cursor:pointer;
-}
+    .auth-box h2 {
+        font-family: 'Montserrat', sans-serif;
+        color: #ff6b81;
+        margin-bottom: 25px;
+        font-size: 28px;
+    }
 
-.google{
-background:#fff;
-color:#333;
-}
+    .auth-box input {
+        width: 100%;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: 1px solid #f1f2f6;
+        border-radius: 30px;
+        background: #fdfafb;
+        outline: none;
+        transition: 0.3s;
+        font-family: 'Quicksand', sans-serif;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
 
-/* PASS STRENGTH */
-#strength{
-font-size:12px;
-text-align:left;
-}
+    .auth-box input:focus {
+        border-color: #ff6b81;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(255, 107, 129, 0.2);
+    }
 
-#msg{margin-top:10px}
+    .auth-box button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #ff6b81, #ff4757);
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 107, 129, 0.3);
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .auth-box button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 107, 129, 0.4);
+    }
+
+    .auth-box button.google-btn {
+        background: white;
+        color: #2d3436;
+        border: 1px solid #dfe6e9;
+        box-shadow: none;
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .auth-box button.google-btn:hover {
+        background: #f1f2f6;
+        transform: translateY(-2px);
+    }
+
+    #strength {
+        font-size: 13px;
+        text-align: left;
+        margin-left: 15px;
+        color: #636e72;
+        font-weight: 600;
+        height: 18px;
+    }
+
+    .link { font-size: 14px; margin-top: 20px; color: #636e72; }
+    .link a { color: #ff6b81; text-decoration: none; font-weight: 600; transition: 0.2s; }
+    .link a:hover { color: #e91e63; text-decoration: underline; }
+    #msg { margin-top: 15px; font-weight: bold; font-size: 14px; }
 </style>
 </head>
 
 <body>
+    <header>
+        <h1>Mint Cosmetics</h1>
+        <p>Lưu giữ nét thanh xuân - Tôn vinh vẻ đẹp tự nhiên</p>
+    </header>
 
-<div class="box">
+    <nav style="top: 0;">
+        <div class="nav-links"><a href="index.html">🏠 Về Trang chủ</a></div>
+        <div class="auth-buttons">
+            <button onclick="window.location.href='dangnhap.html'" style="background: white; color: #ff6b81; border: 1px solid #ff6b81;">Đăng nhập ngay</button>
+        </div>
+    </nav>
 
-<h2>Đăng ký</h2>
+    <div class="auth-wrapper">
+        <div class="auth-box">
+            <h2>Tạo Tài Khoản</h2>
 
-<input id="email" placeholder="Email">
+            <input id="username" placeholder="Tên đăng nhập (viết liền, không dấu)">
+            <input id="email" placeholder="Nhập Email của bạn">
 
-<input type="password" id="pass" placeholder="Mật khẩu">
-<div id="strength"></div>
+            <input type="password" id="pass" placeholder="Mật khẩu">
+            <div id="strength"></div>
+            <input type="password" id="repass" placeholder="Nhập lại mật khẩu">
 
-<input type="password" id="repass" placeholder="Nhập lại mật khẩu">
+            <button onclick="register()">Đăng ký</button>
+            <button class="google-btn" onclick="google()">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 20px;">
+                Đăng ký bằng Google
+            </button>
 
-<button onclick="register()">Đăng ký</button>
+            <div id="msg"></div>
 
-<button class="google" onclick="google()">Đăng ký Google</button>
+            <p class="link">Đã có tài khoản? <a href="dangnhap.html">Đăng nhập</a></p>
+        </div>
+    </div>
 
-<div id="msg"></div>
-
-<p style="margin-top:10px">
-<a href="dangnhap.html" style="color:white">Đã có tài khoản?</a>
-</p>
-
-</div>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 style="color: white; font-size: 1.5rem;">MINT COSMETICS</h3>
+                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Thông tin liên hệ</h3>
+                <p>📍 Kiến Hưng, TP. Hải Phòng</p>
+                <p>📞 0336.326.305</p>
+            </div>
+            <div class="footer-col">
+                <h3>Chính sách & Hỗ trợ</h3>
+                <ul>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách đổi trả</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Mint Cosmetics. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
 
 <script type="module">
 import { auth, db } from './js/firebase-config.js';
@@ -95,89 +189,103 @@ signInWithPopup,
 fetchSignInMethodsForEmail
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
+// BỔ SUNG THÊM: collection, query, where, getDocs để kiểm tra trùng username
+import { doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 /* PASSWORD STRENGTH */
-pass.oninput=()=>{
-let v=pass.value;
-let strength="Yếu";
+document.getElementById('pass').oninput=()=>{
+    let v=document.getElementById('pass').value;
+    let strength="Độ mạnh: Yếu";
+    let color = "#ff7675";
 
-if(v.length>8 && /[A-Z]/.test(v) && /[0-9]/.test(v)){
-strength="Mạnh 💪";
-}else if(v.length>=6){
-strength="Trung bình ⚠️";
-}
-
-strengthDiv.innerText="Độ mạnh: "+strength;
-}
-
-const strengthDiv=document.getElementById("strength");
-
-/* CHECK EMAIL EXIST */
-email.onblur=async()=>{
-if(!email.value) return;
-const methods=await fetchSignInMethodsForEmail(auth,email.value);
-if(methods.length>0){
-show("⚠️ Email đã tồn tại!");
-}
+    if(v.length>8 && /[A-Z]/.test(v) && /[0-9]/.test(v)){
+        strength="Độ mạnh: Rất mạnh 💪"; color = "#00b894";
+    }else if(v.length>=6){
+        strength="Độ mạnh: Trung bình ⚠️"; color = "#f39c12";
+    }
+    const strengthDiv = document.getElementById("strength");
+    strengthDiv.innerText = strength;
+    strengthDiv.style.color = color;
 }
 
 /* REGISTER */
 window.register=async()=>{
-if(!email.value||!pass.value||!repass.value){
-return show("❌ Nhập đủ!");
-}
+    const uname = document.getElementById('username').value.trim();
+    const em = document.getElementById('email').value.trim();
+    const pw = document.getElementById('pass').value;
+    const rpw = document.getElementById('repass').value;
 
-if(pass.value!==repass.value){
-return show("❌ Mật khẩu không khớp");
-}
+    if(!uname || !em || !pw || !rpw){
+        return show("❌ Vui lòng điền đầy đủ thông tin!");
+    }
+    if (/\s/.test(uname)) {
+        return show("❌ Tên đăng nhập không được chứa khoảng trắng!");
+    }
+    if(pw !== rpw){
+        return show("❌ Mật khẩu nhập lại không khớp!");
+    }
 
-show("⏳ Đang xử lý...");
+    show("⏳ Đang xử lý, vui lòng đợi...");
 
-try{
-const res=await createUserWithEmailAndPassword(auth,email.value,pass.value);
-const user=res.user;
+    try{
+        // 1. KIỂM TRA TÊN ĐĂNG NHẬP ĐÃ TỒN TẠI CHƯA
+        const q = query(collection(db, "users"), where("username", "==", uname));
+        const querySnapshot = await getDocs(q);
+        if(!querySnapshot.empty){
+            return show("❌ Tên đăng nhập này đã có người sử dụng!");
+        }
 
-/* LƯU USER */
-await setDoc(doc(db,"users",user.uid),{
-email:user.email,
-role:"user",
-avatar:"",
-createdAt:new Date()
-});
+        // 2. KIỂM TRA EMAIL
+        const methods=await fetchSignInMethodsForEmail(auth,em);
+        if(methods.length>0){
+            return show("⚠️ Email này đã được đăng ký!");
+        }
 
-/* VERIFY */
-await sendEmailVerification(user);
+        // 3. TẠO TÀI KHOẢN
+        const res=await createUserWithEmailAndPassword(auth,em,pw);
+        const user=res.user;
 
-show("📧 Đăng ký thành công! Kiểm tra email");
+        // 4. LƯU USERNAME VÀO DATABASE
+        await setDoc(doc(db,"users",user.uid),{
+            username: uname.toLowerCase(), // Lưu chữ thường cho dễ tìm
+            email: user.email,
+            role: "user",
+            avatar: "",
+            createdAt: new Date()
+        });
 
-}catch(e){
-show("❌ "+e.message);
-}
+        await sendEmailVerification(user);
+        show("📧 Đăng ký thành công! Vui lòng kiểm tra hộp thư email để kích hoạt.");
+
+    }catch(e){
+        show("❌ Lỗi: " + e.message);
+    }
 }
 
 /* GOOGLE */
 window.google=async()=>{
-const provider=new GoogleAuthProvider();
-const result=await signInWithPopup(auth,provider);
-const user=result.user;
+    const provider=new GoogleAuthProvider();
+    const result=await signInWithPopup(auth,provider);
+    const user=result.user;
+    
+    // Tự động tạo username từ phần trước của email nếu đăng nhập Google
+    const autoUsername = user.email.split('@')[0];
 
-await setDoc(doc(db,"users",user.uid),{
-email:user.email,
-role:"user",
-avatar:user.photoURL || "",
-createdAt:new Date()
-});
-
-location.href="index.html";
+    await setDoc(doc(db,"users",user.uid),{
+        username: autoUsername, 
+        email: user.email,
+        role: "user",
+        avatar: user.photoURL || "",
+        createdAt: new Date()
+    });
+    location.href="index.html";
 }
 
-/* MESSAGE */
 function show(t){
-msg.innerText=t;
+    const msg = document.getElementById('msg');
+    msg.innerText=t;
+    msg.style.color = t.includes('❌') ? '#e17055' : (t.includes('⚠️') ? '#f39c12' : '#00b894');
 }
 </script>
-
 </body>
 </html>

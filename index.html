@@ -3,199 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mint Cosmetics - Thiên Đường Mỹ Phẩm Chính Hãng</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Mint Cosmetics - Mỹ Phẩm Chính Hãng</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* CSS BỔ SUNG */
-        .top-category-bar {
-            position: sticky;
-            top: 70px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 999;
-            padding: 15px 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            border-top: 1px solid #f1f2f6;
+        :root {
+            --primary: #ff7ea5; 
+            --primary-light: #fff0f4;
+            --text-main: #333333;
+            --text-gray: #757575;
+            --bg-body: #f5f5f5;
+            --white: #ffffff;
         }
-
-        .filter-btn {
-            padding: 8px 20px;
-            border: 2px solid var(--primary-color);
-            background: white;
-            color: var(--text-color);
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .section-header { text-align: center; margin: 60px 0 30px 0; }
-        .section-header h2 {
-            font-size: 2.2rem;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-block;
-            position: relative;
-        }
-        .section-header h2::after {
-            content: '';
-            width: 50%;
-            height: 4px;
-            background: var(--primary-color);
-            position: absolute;
-            bottom: -10px;
-            left: 25%;
-            border-radius: 2px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); scroll-behavior: smooth; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
         
-        .btn-admin {
-            background: linear-gradient(135deg, #0984e3, #74b9ff) !important;
-            color: white !important;
-            border: none !important;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
 
-        .sort-container {
-            max-width: 1200px;
-            margin: 0 auto 20px auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: flex-end;
-        }
-        #sortPrice {
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 2px solid var(--primary-color);
-            outline: none;
-            font-weight: 600;
-            color: var(--text-color);
-            cursor: pointer;
-        }
+        .top-header { background: var(--white); padding: 15px 0; border-bottom: 1px solid #eee; }
+        .top-header .container { display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+        
+        .logo { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 800; color: var(--primary); letter-spacing: -1px; flex-shrink: 0; cursor: pointer;}
+        
+        .search-bar { flex-grow: 1; position: relative; max-width: 600px; }
+        .search-bar input { width: 100%; padding: 12px 20px; border-radius: 30px; border: 2px solid var(--primary); outline: none; font-size: 14px; background: #fafafa;}
+        .search-bar button { position: absolute; right: 5px; top: 5px; bottom: 5px; background: var(--primary); color: white; border: none; border-radius: 25px; padding: 0 25px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .search-bar button:hover { background: #ff4757; }
 
-        /* Tùy chỉnh nút Mua Ngay và Giỏ hàng */
-        .card-actions {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        .action-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .action-item:hover { color: var(--primary); }
+        .action-item .icon-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); display: flex; justify-content: center; align-items: center; color: var(--primary); font-size: 18px; position: relative;}
+        .cart-badge { position: absolute; top: -5px; right: -5px; background: #ff0000; color: white; font-size: 11px; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center;}
+
+        nav { background: var(--white); box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .nav-list { display: flex; justify-content: center; gap: 35px; }
+        .nav-list li { padding: 15px 0; }
+        .nav-list a { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--text-main); transition: 0.2s; cursor: pointer;}
+        .nav-list a:hover, .nav-list a.active { color: var(--primary); }
+
+        .main-banner { margin-top: 15px; border-radius: 15px; overflow: hidden; height: 400px; }
+        .main-banner img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 15px;}
+
+        .section-wrapper { margin: 30px 0; background: var(--white); border-radius: 15px; padding: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); scroll-margin-top: 80px;}
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--primary-light); padding-bottom: 10px;}
+        .section-title h2 { font-family: 'Montserrat', sans-serif; font-size: 22px; color: var(--primary); text-transform: uppercase; font-weight: 800;}
+        
+        .flash-sale-header { background: linear-gradient(90deg, #ff4757, #ff7ea5); padding: 15px 25px; border-radius: 10px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;}
+        .flash-sale-header h2 { font-family: 'Montserrat'; font-style: italic; font-size: 24px;}
+
+        .product-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+        
+        .product-card { 
+            border: 1px solid #f0f0f0; border-radius: 10px; padding: 10px; position: relative; 
+            transition: all 0.3s; background: var(--white); display: flex; flex-direction: column;
         }
-        .btn-quick-buy {
-            background: var(--text-color);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+        .product-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(255,126,165,0.2); transform: translateY(-3px);}
+        
+        .discount-badge { position: absolute; top: 10px; right: 10px; background: #ff4757; color: white; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 5px; z-index: 2;}
+        
+        .product-img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 15px;}
+        
+        .product-brand { font-size: 11px; color: var(--text-gray); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;}
+        .product-name { font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 36px; line-height: 1.4;}
+        
+        .price-box { margin-top: auto; }
+        .price-original { font-size: 12px; color: #a0a0a0; text-decoration: line-through; }
+        .price-sale { font-size: 16px; font-weight: 800; color: #ff4757; margin-top: 2px;}
+        
+        .card-buttons { display: flex; gap: 8px; margin-top: 15px; }
+        .btn-buy-now { flex: 1; background: var(--text-main); color: white; border: none; padding: 10px 0; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 12px; }
+        .btn-buy-now:hover { background: #000; transform: translateY(-2px); }
+        .btn-add-cart { flex: 1; background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary); padding: 10px 0; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 12px; }
+        .product-card:hover .btn-add-cart { background: var(--primary); color: white; }
+
+        .marquee-promo-wrapper {
+            background: linear-gradient(90deg, #ff4757, #ff7ea5);
+            color: white; padding: 25px 0; overflow: hidden; display: flex; white-space: nowrap;
+            border-radius: 15px; margin: 30px 0; box-shadow: 0 8px 20px rgba(255, 126, 165, 0.25);
+            font-size: 20px; font-weight: 800; font-family: 'Montserrat', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
         }
-        .btn-quick-buy:hover {
-            background: #000;
-            transform: scale(1.02);
-        }
-        .btn-add-cart-outline {
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            padding: 8px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-add-cart-outline:hover {
-            background: var(--primary-color);
-            color: white;
+        .marquee-promo-content { display: flex; animation: marqueePromo 25s linear infinite; }
+        .marquee-promo-content span { margin: 0 40px; display: inline-flex; align-items: center; gap: 12px; }
+        @keyframes marqueePromo { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        footer { background: #fff; padding: 50px 0 20px 0; margin-top: 40px; border-top: 3px solid var(--primary);}
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 30px; margin-bottom: 30px; }
+        .footer-col h3 { font-family: 'Montserrat'; font-size: 16px; margin-bottom: 20px; color: var(--text-main); text-transform: uppercase;}
+        .footer-col p, .footer-col li { font-size: 13px; color: var(--text-gray); margin-bottom: 12px; line-height: 1.5;}
+        .footer-col a:hover { color: var(--primary); }
+        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid #eee; font-size: 13px; color: var(--text-gray); }
+
+        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) {
+            .top-header .container { flex-wrap: wrap; }
+            .search-bar { order: 3; max-width: 100%; }
+            .nav-list { flex-wrap: wrap; gap: 15px; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Mint Cosmetics</h1>
-        <p>Lưu giữ nét thanh xuân - Tôn vinh vẻ đẹp tự nhiên</p>
-    </header>
-
-    <nav style="top: 0;">
-        <div class="nav-links">
-            <a href="index.html">🏠 Trang chủ</a>
-            <a href="#featured-section">🌟 Nổi bật</a>
-            <a href="giohang.html" id="cartLink">🛒 Giỏ hàng (<span id="cartCount">0</span>)</a>
+    <div class="top-header">
+        <div class="container">
+            <div class="logo" onclick="window.location.reload()">Mint Cosmetics</div>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm, thương hiệu..." onkeypress="handleSearch(event)">
+                <button onclick="executeSearch()">TÌM KIẾM</button>
+            </div>
+            
+            <div class="header-actions" id="authSection">
+                <div class="action-item" onclick="window.location.href='dangnhap.html'">
+                    <div class="icon-circle">👤</div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-gray);">Đăng nhập/Đăng ký</div>
+                        <div>Tài khoản</div>
+                    </div>
+                </div>
+                <div class="action-item" onclick="window.location.href='giohang.html'">
+                    <div class="icon-circle">
+                        🛒
+                        <span class="cart-badge" id="cartCount">0</span>
+                    </div>
+                    <div>Giỏ hàng</div>
+                </div>
+            </div>
         </div>
-        <div class="auth-buttons" id="authSection">
-            <button onclick="window.location.href='dangnhap.html'">Đăng nhập</button>
-            <button onclick="window.location.href='dangky.html'">Đăng ký</button>
+    </div>
+
+    <nav>
+        <div class="container">
+            <ul class="nav-list">
+                <li><a class="active" onclick="filterProducts('Tất cả', this)">Trang chủ</a></li>
+                <li><a onclick="filterProducts('Trang điểm', this)">Trang điểm</a></li>
+                <li><a onclick="filterProducts('Chăm sóc da', this)">Chăm sóc da</a></li>
+                <li><a onclick="filterProducts('Chăm sóc cơ thể', this)">Chăm sóc cơ thể</a></li>
+                <li><a onclick="filterProducts('Nước hoa', this)">Nước hoa</a></li>
+                <li><a onclick="filterProducts('Chăm sóc tóc', this)">Chăm sóc tóc</a></li>
+            </ul>
         </div>
     </nav>
 
-    <div class="top-category-bar" id="categoryFilter">
-        <button class="filter-btn active" onclick="filterProducts('Tất cả', this)">Tất cả</button>
-        <button class="filter-btn" onclick="filterProducts('Trang điểm', this)">Trang điểm</button>
-        <button class="filter-btn" onclick="filterProducts('Chăm sóc cơ thể', this)">Chăm sóc cơ thể</button>
-        <button class="filter-btn" onclick="filterProducts('Nước hoa', this)">Nước hoa</button>
-        <button class="filter-btn" onclick="filterProducts('Chăm sóc tóc', this)">Chăm sóc tóc</button>
-    </div>
+    <div class="container">
+        <div class="main-banner">
+            <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=1200&auto=format&fit=crop" alt="Banner Khuyến Mãi">
+        </div>
 
-    <div class="hero">
-        <h2>Tỏa sáng cùng Mint Cosmetics </h2>
-        <p>Khám phá bộ sưu tập mỹ phẩm chính hãng mới nhất. Chăm sóc làn da hoàn hảo từ sâu bên trong với các thương hiệu hàng đầu.</p>
-        <button class="btn-shop-now" onclick="document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'})">Mua sắm ngay</button>
-    </div>
+        <div class="section-wrapper" id="featured-section">
+            <div class="flash-sale-header">
+                <h2>⚡ FLASH SALE GIỮA THÁNG</h2>
+                <div style="font-weight: 600;">Kết thúc trong: <span id="flashSaleTimer">00:00:00</span></div>
+            </div>
+            <div class="product-grid" id="featuredContainer"></div>
+        </div>
 
-    <div class="section-header" id="featured-section">
-        <h2>🌟 Sản Phẩm Nổi Bật</h2>
-    </div>
-    <div class="products-grid" id="featuredContainer"></div>
+        <div class="marquee-promo-wrapper">
+            <div class="marquee-promo-content">
+                <span>✨ DEAL SỐC: MUA 1 TẶNG 1 TOÀN BỘ SON MÔI</span>
+                <span>🎁 NHẬP MÃ: MINT50K - GIẢM NGAY 50K CHO ĐƠN TỪ 300K</span>
+                <span>🚚 FREESHIP MỌI ĐƠN HÀNG TỪ 500K</span>
+                <span>💖 CAM KẾT HÀNG CHÍNH HÃNG 100%</span>
+                <span>✨ DEAL SỐC: MUA 1 TẶNG 1 TOÀN BỘ SON MÔI</span>
+                <span>🎁 NHẬP MÃ: MINT50K - GIẢM NGAY 50K CHO ĐƠN TỪ 300K</span>
+                <span>🚚 FREESHIP MỌI ĐƠN HÀNG TỪ 500K</span>
+                <span>💖 CAM KẾT HÀNG CHÍNH HÃNG 100%</span>
+            </div>
+        </div>
 
-    <div class="section-header" id="all-products-section">
-        <h2>🛍️ Cửa Hàng Của Mint Cosmetics</h2>
-    </div>
-
-    <div class="sort-container">
-        <select id="sortPrice" onchange="sortProducts()">
-            <option value="default">Sắp xếp: Mới nhất</option>
-            <option value="lowToHigh">Giá: Thấp đến Cao</option>
-            <option value="highToLow">Giá: Cao đến Thấp</option>
-        </select>
-    </div>
-
-    <div class="products-grid" id="productContainer">
-        <h3 style="width: 100%; text-align: center; color: #888;">Đang tải dữ liệu sản phẩm...</h3>
+        <div class="section-wrapper" id="all-products-section">
+            <div class="section-title">
+                <h2>GỢI Ý CHO BẠN</h2>
+                <select style="padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc; outline: none;" id="sortPrice" onchange="sortProducts()">
+                    <option value="default">Mới nhất</option>
+                    <option value="lowToHigh">Giá: Thấp đến Cao</option>
+                    <option value="highToLow">Giá: Cao đến Thấp</option>
+                </select>
+            </div>
+            <div class="product-grid" id="productContainer">
+                <h3 style="width: 100%; grid-column: 1 / -1; text-align: center; color: #888; padding: 50px 0;">Đang tải dữ liệu sản phẩm...</h3>
+            </div>
+        </div>
     </div>
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-col">
-                <h3 style="color: white; font-size: 1.5rem; letter-spacing: 1px;">MINT COSMETICS</h3>
-                <p style="color: #b2bec3;">Hệ thống phân phối mỹ phẩm làm đẹp uy tín, chất lượng.</p>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 style="color: var(--primary); font-size: 20px; font-weight: 800;">MINT COSMETICS</h3>
+                    <p>Thiên đường mỹ phẩm chính hãng, cập nhật xu hướng làm đẹp mới nhất mỗi ngày.</p>
+                    <p>📍 <strong>Trụ sở:</strong> Kiến Hưng, TP. Hải Phòng</p>
+                    <p>📞 <strong>Hotline:</strong> 0336.326.305</p>
+                    <p>📧 <strong>Email:</strong> cskh@mintcosmetics.vn</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Hỗ trợ khách hàng</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chính sách thanh toán</a></li>
+                        <li><a href="#">Chính sách giao hàng</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Về chúng tôi</h3>
+                    <ul>
+                        <li><a href="#">Giới thiệu Mint Cosmetics</a></li>
+                        <li><a href="#">Hệ thống cửa hàng</a></li>
+                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Đăng ký nhận tin</h3>
+                    <p>Nhận ngay voucher 50K cho đơn hàng đầu tiên khi đăng ký email.</p>
+                    <div style="display: flex; margin-top: 10px;">
+                        <input type="email" id="footerEmail" placeholder="Nhập email của bạn" style="padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px 0 0 5px; outline: none;">
+                        <button onclick="subscribeEmail()" style="background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 0 5px 5px 0; cursor: pointer; font-weight: bold;">GỬI</button>
+                    </div>
+                </div>
             </div>
-            <div class="footer-col">
-                <h3>Thông tin liên hệ</h3>
-                <p>📍 Kiến Hưng, TP. Hải Phòng</p>
-                <p>📞 0336.326.305</p>
+            <div class="footer-bottom">
+                &copy; 2026 Bản quyền thuộc về Công ty TNHH Mint Cosmetics.
             </div>
-            <div class="footer-col">
-                <h3>Chính sách & Hỗ trợ</h3>
-                <ul>
-                    <li><a href="#">Chính sách giao hàng</a></li>
-                    <li><a href="#">Chính sách đổi trả</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Mint Cosmetics. Bảo lưu mọi quyền.</p>
         </div>
     </footer>
 
@@ -206,12 +241,39 @@
 
         let allProducts = []; 
 
+        // 1. ĐỒNG HỒ FLASH SALE CHẠY THỰC TẾ
+        function updateFlashSaleTimer() {
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0); // Đếm ngược đến 12h đêm nay
+
+            const diff = midnight - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            document.getElementById('flashSaleTimer').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateFlashSaleTimer, 1000);
+
         onAuthStateChanged(auth, async (user) => {
             const authSection = document.getElementById('authSection');
             if (user) {
                 authSection.innerHTML = `
-                    <span style="margin-right: 15px; font-weight: bold;">Chào, ${user.email}</span>
-                    <button class="logout" id="btnLogout">Đăng xuất</button>
+                    <div class="action-item" style="cursor: default;">
+                        <div class="icon-circle" style="background: #e0f7fa; color: #00acc1;">👤</div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-gray);">Xin chào,</div>
+                            <div style="font-weight: bold; color: var(--primary);">${user.email.split('@')[0]}</div>
+                        </div>
+                    </div>
+                    <div class="action-item" id="btnLogout" style="cursor: pointer;">
+                        <div style="color: red; font-size: 13px; text-decoration: underline;">Đăng xuất</div>
+                    </div>
+                    <div class="action-item" onclick="window.location.href='giohang.html'">
+                        <div class="icon-circle">🛒<span class="cart-badge" id="cartCount">0</span></div>
+                        <div>Giỏ hàng</div>
+                    </div>
                 `;
                 document.getElementById('btnLogout').addEventListener('click', async () => {
                     await signOut(auth);
@@ -222,9 +284,9 @@
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists() && docSnap.data().role === "admin") {
-                        const adminBtn = document.createElement('button');
-                        adminBtn.innerText = "⚙️ Quản trị Admin";
-                        adminBtn.className = "btn-admin";
+                        const adminBtn = document.createElement('div');
+                        adminBtn.className = "action-item";
+                        adminBtn.innerHTML = `<div style="background: var(--primary); color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px;">Quản trị Admin</div>`;
                         adminBtn.onclick = () => window.location.href = 'admin.html';
                         authSection.insertBefore(adminBtn, document.getElementById('btnLogout'));
                     }
@@ -245,7 +307,7 @@
                 renderFeatured();
                 renderProducts('Tất cả');
             } catch (error) {
-                document.getElementById('productContainer').innerHTML = "Lỗi tải dữ liệu.";
+                document.getElementById('productContainer').innerHTML = "<h3 style='width: 100%; grid-column: 1 / -1; text-align: center; color: red;'>Lỗi tải dữ liệu.</h3>";
             }
         }
 
@@ -255,10 +317,10 @@
             const featuredList = allProducts.filter(p => p.isFeatured === true);
             
             if(featuredList.length === 0) {
-                container.innerHTML = "<p style='width:100%; text-align:center; color:#999;'>Chưa có sản phẩm nổi bật nào được chọn.</p>";
+                container.innerHTML = "<p style='width:100%; grid-column: 1 / -1; text-align:center; color:#999;'>Chưa có deal hot nào.</p>";
                 return;
             }
-            featuredList.forEach(p => container.appendChild(createProductCard(p)));
+            featuredList.forEach(p => container.appendChild(createProductCard(p, true)));
         }
 
         function renderProducts(categoryFilter) {
@@ -266,67 +328,86 @@
             container.innerHTML = ""; 
 
             const filtered = allProducts.filter(p => {
-                if (categoryFilter === 'Tất cả') return true;
+                if (categoryFilter === 'Tất cả' || categoryFilter === 'Trang chủ') return true;
                 return (p.category || 'Chăm sóc da') === categoryFilter;
             });
 
             if(filtered.length === 0) {
-                container.innerHTML = `<h3 style="width: 100%; text-align: center; color: #888;">Trống...</h3>`;
+                container.innerHTML = `<h3 style="width: 100%; grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">Hiện chưa có sản phẩm nào trong danh mục này...</h3>`;
                 return;
             }
-            filtered.forEach(p => container.appendChild(createProductCard(p)));
+            filtered.forEach(p => container.appendChild(createProductCard(p, false)));
         }
 
-        function createProductCard(product) {
+        // 2. TỰ ĐỘNG LẤY PHẦN TRĂM GIẢM GIÁ NẾU BẠN CÓ NHẬP (HOẶC TỰ TÍNH)
+        function createProductCard(product, isFlashSale) {
             const div = document.createElement('div');
             div.className = 'product-card';
-            div.innerHTML = `
-                <a href="product-detail.html?id=${product.id}" style="text-decoration: none; color: inherit;">
-                    <img src="${product.imageUrl}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p style="font-size: 12px; color: var(--primary-color); font-weight: bold;">${product.category || 'Chưa phân loại'}</p>
-                </a>
-                <div class="card-actions">
-                    <p class="price">${product.price.toLocaleString('vi-VN')} ₫</p>
-                    
-                    <button class="btn-quick-buy" onclick="buyNow('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
-                        MUA NGAY
-                    </button>
+            
+            // Nếu bạn có thuộc tính discount ở Admin thì lấy, không thì mặc định tính dựa trên giá gốc ảo
+            const discountLabel = product.discountPercent ? `-${product.discountPercent}%` : (isFlashSale ? "-20%" : "-15%");
+            const fakeOriginalPrice = product.originalPrice ? product.originalPrice : Math.round(product.price * 1.15); 
 
-                    <button class="btn-add-cart-outline" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">
-                        THÊM GIỎ HÀNG
-                    </button>
+            div.innerHTML = `
+                <div class="discount-badge">${discountLabel}</div>
+                <a href="product-detail.html?id=${product.id}">
+                    <img src="${product.imageUrl}" alt="${product.name}" class="product-img">
+                    <div class="product-brand">${product.category || 'MINT COSMETICS'}</div>
+                    <div class="product-name">${product.name}</div>
+                </a>
+                <div class="price-box">
+                    <div class="price-original">${fakeOriginalPrice.toLocaleString('vi-VN')} ₫</div>
+                    <div class="price-sale">${product.price.toLocaleString('vi-VN')} ₫</div>
+                </div>
+                <div class="card-buttons">
+                    <button class="btn-buy-now" onclick="buyNow('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">MUA NGAY</button>
+                    <button class="btn-add-cart" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.imageUrl}')">THÊM GIỎ</button>
                 </div>
             `;
             return div;
         }
 
-        // HÀM MUA NGAY: Đẩy thẳng sang trang giỏ hàng với 1 sản phẩm duy nhất
-        window.buyNow = function(id, name, price, image) {
-            const item = { id, name, price, image, quantity: 1 };
-            localStorage.setItem('MintCart', JSON.stringify([item]));
-            window.location.href = 'giohang.html';
+        window.handleSearch = function(e) { if (e.key === 'Enter') executeSearch(); }
+
+        window.executeSearch = function() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const container = document.getElementById('productContainer');
+            container.innerHTML = ""; 
+            document.querySelectorAll('.nav-list a').forEach(b => b.classList.remove('active'));
+            const filtered = allProducts.filter(p => {
+                return p.name.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query));
+            });
+            if(filtered.length === 0) {
+                container.innerHTML = `<h3 style="width: 100%; grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">Không tìm thấy kết quả nào cho "${query}"</h3>`;
+            } else {
+                filtered.forEach(p => container.appendChild(createProductCard(p, false)));
+            }
+            document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
+        }
+
+        window.filterProducts = function(category, btn) {
+            document.querySelectorAll('.nav-list a').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.getElementById('searchInput').value = "";
+            renderProducts(category);
+            document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
         }
 
         window.sortProducts = function() {
             const sortValue = document.getElementById('sortPrice').value;
-            const activeCategory = document.querySelector('.filter-btn.active').innerText;
-
-            if (sortValue === 'lowToHigh') {
-                allProducts.sort((a, b) => a.price - b.price);
-            } else if (sortValue === 'highToLow') {
-                allProducts.sort((a, b) => b.price - a.price);
-            } else {
-                allProducts.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-            }
-            renderProducts(activeCategory);
+            const activeLink = document.querySelector('.nav-list a.active');
+            const activeCategory = activeLink ? activeLink.innerText : 'Tất cả';
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            if (sortValue === 'lowToHigh') { allProducts.sort((a, b) => a.price - b.price); } 
+            else if (sortValue === 'highToLow') { allProducts.sort((a, b) => b.price - a.price); } 
+            else { allProducts.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0)); }
+            if (searchQuery) { executeSearch(); } else { renderProducts(activeCategory); }
         }
 
-        window.filterProducts = function(category, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderProducts(category);
-            document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
+        window.buyNow = function(id, name, price, image) {
+            const item = { id, name, price, image, quantity: 1 };
+            localStorage.setItem('MintCart', JSON.stringify([item]));
+            window.location.href = 'giohang.html';
         }
 
         window.addToCart = function(id, name, price, image) {
@@ -336,12 +417,22 @@
             else cart.push({ id, name, price, image, quantity: 1 });
             localStorage.setItem('MintCart', JSON.stringify(cart));
             updateCartCount();
-            alert(`Đã thêm vào giỏ hàng!`);
+            alert(`Đã thêm ${name} vào giỏ hàng!`);
         }
 
         function updateCartCount() {
             let cart = JSON.parse(localStorage.getItem('MintCart')) || [];
             document.getElementById('cartCount').innerText = cart.reduce((t, i) => t + i.quantity, 0);
+        }
+
+        window.subscribeEmail = function() {
+            const emailInput = document.getElementById('footerEmail');
+            if(emailInput.value.trim() !== '') {
+                alert('Cảm ơn bạn! Đăng ký nhận tin thành công cho email: ' + emailInput.value);
+                emailInput.value = '';
+            } else {
+                alert('Vui lòng nhập email trước khi gửi nhé!');
+            }
         }
 
         loadProducts();
