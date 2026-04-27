@@ -188,6 +188,12 @@
             <div class="product-grid" id="productContainer">
                 <h3 style="width: 100%; grid-column: 1 / -1; text-align: center; color: #888; padding: 50px 0;">Đang tải dữ liệu sản phẩm...</h3>
             </div>
+            
+            <div style="text-align: center; margin-top: 30px; width: 100%;">
+                <button id="btnLoadMore" onclick="loadMoreProducts()" style="display: none; padding: 12px 35px; background: var(--primary); color: white; border: none; border-radius: 25px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 14px; box-shadow: 0 4px 10px rgba(255,126,165,0.3);">
+                    XEM THÊM SẢN PHẨM ⬇️
+                </button>
+            </div>
         </div>
     </div>
 
@@ -196,10 +202,10 @@
             <div class="footer-grid">
                 <div class="footer-col">
                     <h3 style="color: var(--primary); font-size: 20px; font-weight: 800;">MINT COSMETICS</h3>
-                    <p>Thiên đường mỹ phẩm chính hãng, cập nhật xu hướng làm đẹp mới nhất mỗi ngày.</p>
+                    <p>Thiên đường mỹ phẩm chính hãng, cập nhật xu hướng làm đẹp mới nhất mỗi ngày.Hãy cùng Mint Cosmetics khám phá những sản phẩm tuyệt vời!</p>
                     <p>📍 <strong>Trụ sở:</strong> Kiến Hưng, TP. Hải Phòng</p>
                     <p>📞 <strong>Hotline:</strong> 0336.326.305</p>
-                    <p>📧 <strong>Email:</strong> cskh@mintcosmetics.vn</p>
+                    <p>📧 <strong>Email:</strong> nganvuthi1203@gmail.com</p>
                 </div>
                 <div class="footer-col">
                     <h3>Hỗ trợ khách hàng</h3>
@@ -229,7 +235,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                &copy; 2026 Bản quyền thuộc về Công ty TNHH Mint Cosmetics.
+                 2026 Bản quyền thuộc về Mint Cosmetics.
             </div>
         </div>
     </footer>
@@ -240,6 +246,8 @@
         import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
         let allProducts = []; 
+        let currentLimit = 10; 
+        let currentCategory = 'Tất cả';
 
         // 1. ĐỒNG HỒ FLASH SALE CHẠY THỰC TẾ
         function updateFlashSaleTimer() {
@@ -325,6 +333,7 @@
 
         function renderProducts(categoryFilter) {
             const container = document.getElementById('productContainer');
+            const btnLoadMore = document.getElementById('btnLoadMore');
             container.innerHTML = ""; 
 
             const filtered = allProducts.filter(p => {
@@ -334,9 +343,20 @@
 
             if(filtered.length === 0) {
                 container.innerHTML = `<h3 style="width: 100%; grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">Hiện chưa có sản phẩm nào trong danh mục này...</h3>`;
+                if(btnLoadMore) btnLoadMore.style.display = 'none';
                 return;
             }
-            filtered.forEach(p => container.appendChild(createProductCard(p, false)));
+
+            const productsToShow = filtered.slice(0, currentLimit);
+            productsToShow.forEach(p => container.appendChild(createProductCard(p, false)));
+
+            if(btnLoadMore) {
+                if(currentLimit < filtered.length) {
+                    btnLoadMore.style.display = 'inline-block';
+                } else {
+                    btnLoadMore.style.display = 'none';
+                }
+            }
         }
 
         // 2. TỰ ĐỘNG LẤY PHẦN TRĂM GIẢM GIÁ NẾU BẠN CÓ NHẬP (HOẶC TỰ TÍNH)
@@ -372,6 +392,8 @@
         window.executeSearch = function() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const container = document.getElementById('productContainer');
+            const btnLoadMore = document.getElementById('btnLoadMore');
+            if(btnLoadMore) btnLoadMore.style.display = 'none';
             container.innerHTML = ""; 
             document.querySelectorAll('.nav-list a').forEach(b => b.classList.remove('active'));
             const filtered = allProducts.filter(p => {
@@ -389,8 +411,17 @@
             document.querySelectorAll('.nav-list a').forEach(b => b.classList.remove('active'));
             if(btn) btn.classList.add('active');
             document.getElementById('searchInput').value = "";
+            
+            currentLimit = 10;
+            currentCategory = category;
+            
             renderProducts(category);
             document.getElementById('all-products-section').scrollIntoView({behavior: 'smooth'});
+        }
+
+        window.loadMoreProducts = function() {
+            currentLimit += 10;
+            renderProducts(currentCategory);
         }
 
         window.sortProducts = function() {
@@ -425,13 +456,28 @@
             document.getElementById('cartCount').innerText = cart.reduce((t, i) => t + i.quantity, 0);
         }
 
-        window.subscribeEmail = function() {
+       import { addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"; // Nhớ thêm import này lên đầu cùng với các import khác nếu chưa có
+
+        window.subscribeEmail = async function() {
             const emailInput = document.getElementById('footerEmail');
-            if(emailInput.value.trim() !== '') {
-                alert('Cảm ơn bạn! Đăng ký nhận tin thành công cho email: ' + emailInput.value);
-                emailInput.value = '';
+            const emailValue = emailInput.value.trim();
+
+            if(emailValue !== '') {
+                try {
+                    // Lưu email đăng ký lên bảng "subscribers" của Firebase
+                    await addDoc(collection(db, "subscribers"), {
+                        email: emailValue,
+                        voucher: "MINT50K",
+                        createdAt: new Date()
+                    });
+                    
+                    alert('🎉 Đăng ký thành công!\nVoucher giảm 50K (Mã: MINT50K) đã được tự động áp dụng cho tài khoản Email: ' + emailValue);
+                    emailInput.value = '';
+                } catch (error) {
+                    alert('Đã xảy ra lỗi khi đăng ký, vui lòng thử lại!');
+                }
             } else {
-                alert('Vui lòng nhập email trước khi gửi nhé!');
+                alert('Vui lòng nhập địa chỉ email của bạn trước khi gửi nhé!');
             }
         }
 

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - MINT COSMETICS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff9a9e; 
+            --primary-dark: #fecfef;
+            --bg-body: #f8f9fa;
+            --white: #ffffff;
+            --text-main: #2d3436;
+            --text-gray: #636e72;
+            --border: #e9ecef;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); }
+
+        nav { background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 15px 0; }
+        .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .logo { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: #ff7ea5; cursor: pointer; }
+        
+        .progress-bar { max-width: 600px; margin: 30px auto; display: flex; justify-content: space-between; align-items: center; position: relative; padding: 0 40px; }
+        .progress-bar::before { content: ""; position: absolute; top: 50%; left: 40px; right: 40px; height: 3px; background: #dfe6e9; z-index: 1; transform: translateY(-50%); }
+        .step { position: relative; z-index: 2; background: var(--bg-body); padding: 0 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .step-circle { width: 35px; height: 35px; border-radius: 50%; background: #dfe6e9; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; }
+        .step.active .step-circle { background: #ff7ea5; box-shadow: 0 0 10px rgba(255,126,165,0.4); }
+        .step span { font-size: 13px; font-weight: 700; color: #b2bec3; text-transform: uppercase; }
+        .step.active span { color: #ff7ea5; }
+
+        /* BỐ CỤC 2 CỘT */
+        .checkout-container { max-width: 1100px; margin: 0 auto 50px auto; display: flex; gap: 30px; padding: 0 20px; align-items: flex-start; }
+        
+        .left-col { flex: 1.3; display: flex; flex-direction: column; gap: 20px; }
+        .right-col { flex: 1; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        .card { background: var(--white); border-radius: 16px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .card-title { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text-main); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-control { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; outline: none; transition: 0.3s; background: var(--white); }
+        .form-control:focus { border-color: #ff7ea5; box-shadow: 0 0 0 3px rgba(255,126,165,0.1); }
+        .form-row { display: flex; gap: 15px; }
+
+        .payment-option { display: flex; align-items: center; gap: 15px; padding: 15px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; background: #fafafa;}
+        .payment-option:hover { border-color: #ff7ea5; }
+        .payment-option input[type="radio"] { accent-color: #ff7ea5; width: 18px; height: 18px; }
+        .payment-option:has(input[type="radio"]:checked) { border-color: #ff7ea5; background: #fff0f4; }
+        .payment-icon { font-size: 24px; }
+
+        .mini-cart-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .mini-img-wrapper { position: relative; width: 65px; height: 65px; border-radius: 10px; border: 1px solid var(--border); padding: 5px; }
+        .mini-img-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        .mini-qty { position: absolute; top: -8px; right: -8px; background: #636e72; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; }
+        .mini-info { flex: 1; }
+        .mini-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+        .mini-variant { font-size: 12px; color: var(--text-gray); }
+        .mini-price { font-weight: 700; font-size: 14px; color: var(--text-main); }
+
+        .voucher-box { display: flex; gap: 10px; margin-top: 10px; }
+        .voucher-input { flex: 1; padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+        .btn-apply { background: #e9ecef; color: #adb5bd; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: not-allowed; transition: 0.3s; }
+        .btn-apply.active { background: #ff7ea5; color: white; cursor: pointer; }
+
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; color: var(--text-gray); font-weight: 600; }
+        .summary-total { border-top: 1px dashed var(--border); padding-top: 20px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--text-main); font-size: 16px;}
+        .total-number { font-size: 22px; font-weight: 900; color: var(--text-main); }
+
+        .btn-submit { background: #e5b0b9; color: white; width: 100%; padding: 18px; border: none; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .btn-submit:hover { background: #d698a3; }
+
+        /* MODAL MÃ QR */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 20px; width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from{transform: translateY(30px); opacity:0;} to{transform: translateY(0); opacity:1;} }
+        .modal-content img { width: 100%; max-width: 250px; border-radius: 10px; display: block; margin: 15px auto; border: 1px solid var(--border); padding: 10px;}
+        .qr-info-box { background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: left; font-size: 14px; margin-bottom: 20px; border: 1px solid var(--border);}
+        .btn-confirm-transfer { background: #00b894; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-cancel-transfer { background: transparent; color: #636e72; border: none; padding: 10px; width: 100%; cursor: pointer; margin-top: 10px; font-weight: 700; }
+
+        @media (max-width: 900px) { .checkout-container { flex-direction: column; } .right-col { position: static; width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">MINT COSMETICS</div>
+            <div class="auth-buttons">
+            <a href="giohang.html" style="font-weight: 600; color: #636e72; text-decoration: none; font-size: 14px;">← Quay lại giỏ hàng</a>
+        </div>
+    </nav>
+
+    <div class="progress-bar">
+        <div class="step active"><div class="step-circle">✓</div><span>Giỏ hàng</span></div>
+        <div class="step active"><div class="step-circle">2</div><span>Thanh toán</span></div>
+        <div class="step"><div class="step-circle">3</div><span>Hoàn tất</span></div>
+    </div>
+
+    <div class="checkout-container">
+        <div class="left-col">
+            <div class="card">
+                <h2 class="card-title">Thông tin giao hàng</h2>
+                <div class="form-group">
+                    <input type="text" id="cusName" class="form-control" placeholder="Họ và tên" required>
+                </div>
+                <div class="form-group form-row">
+                    <input type="tel" id="cusPhone" class="form-control" placeholder="Số điện thoại" required>
+                    <input type="email" id="cusEmail" class="form-control" placeholder="Email (không bắt buộc)">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" value="Vietnam" readonly style="background: #f1f2f6; color: #636e72;">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="cusAddress" class="form-control" placeholder="Địa chỉ, số nhà, đường..." required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="cusCity" class="form-control" placeholder="Tỉnh/TP, Phường/Xã" required>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Phương thức giao hàng</h2>
+                <div style="background: #f8f9fa; border: 1px solid var(--border); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; font-size: 14px;">Giao hàng tiêu chuẩn</span>
+                    <span style="font-weight: bold; color: var(--text-main);">Miễn phí</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Phương thức thanh toán</h2>
+                <label class="payment-option">
+                    <input type="radio" name="paymentType" value="Chuyển khoản" checked>
+                    <span class="payment-icon">📱</span>
+                    <span style="font-weight: 600; font-size: 15px;">Chuyển khoản (Quét mã QR)</span>
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="paymentType" value="COD">
+                    <span class="payment-icon">💵</span>
+                    <span style="font-weight: 600; font-size: 15px;">Thanh toán khi nhận hàng (COD)</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="right-col">
+            <div class="card">
+                <h2 class="card-title" style="margin-bottom: 10px;">Hàng hóa</h2>
+                <div id="checkoutItemsList"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title" style="margin-bottom: 10px;">Mã khuyến mãi</h2>
+                <div class="voucher-box">
+                    <input type="text" class="voucher-input" id="voucherCode" placeholder="Nhập mã khuyến mãi" oninput="checkVoucher()">
+                    <button class="btn-apply" id="btnApplyVoucher" onclick="applyVoucher()">Áp dụng</button>
+                </div>
+                <p id="voucherMsg" style="font-size: 12px; margin-top: 8px; font-weight: bold;"></p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title" style="margin-bottom: 15px;">Tóm tắt đơn hàng</h2>
+                <div class="summary-row">
+                    <span>Tổng tiền hàng</span>
+                    <span id="subTotal">0 ₫</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span>Miễn phí</span>
+                </div>
+                <div class="summary-row" id="discountRow" style="display: none; color: #00b894;">
+                    <span>Khuyến mãi</span>
+                    <span id="discountValue">-0 ₫</span>
+                </div>
+                <div class="summary-total">
+                    <span>Tổng thanh toán</span>
+                    <span class="total-number" id="finalTotal">0 ₫</span>
+                </div>
+                
+                <button class="btn-submit" id="btnPlaceOrder">Đặt hàng</button>
+                <p id="checkoutMsg" style="text-align: center; font-weight: bold; margin-top: 15px; font-size: 13px;"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <h3 style="font-family: 'Montserrat'; color: #ff7ea5; margin-bottom: 5px;">Quét mã thanh toán</h3>
+            <p style="font-size: 13px; color: #636e72;">Mở app ngân hàng để quét mã QR</p>
+            
+            <img id="qrImage" src="" alt="Mã QR Chuyển khoản">
+            
+            <div class="qr-info-box">
+                <p style="margin-bottom: 8px;">💰 Số tiền: <strong id="qrAmount" style="color: #ff4757; font-size: 16px;"></strong></p>
+                <p>📝 Nội dung: <strong id="qrContent"></strong></p>
+            </div>
+
+            <button class="btn-confirm-transfer" id="btnConfirmTransfer">TÔI ĐÃ CHUYỂN KHOẢN XONG</button>
+            <button class="btn-cancel-transfer" id="btnCancelTransfer">Quay lại</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+        let currentUserId = "guest";
+        let baseTotal = 0; 
+        let finalTotal = 0; 
+        let discountApplied = 0;
+
+        onAuthStateChanged(auth, (user) => { 
+            if (user) {
+                currentUserId = user.uid;
+                if(user.email) document.getElementById('cusEmail').value = user.email;
+            }
+        });
+
+        // 1. RENDER MINI CART TỪ LOCALSTORAGE
+        function loadCheckoutCart() {
+            const cart = JSON.parse(localStorage.getItem('MintCart')) || [];
+            const container = document.getElementById('checkoutItemsList');
+            
+            if (cart.length === 0) {
+                alert("Giỏ hàng của bạn đang trống!");
+                window.location.href = "giohang.html";
+                return;
+            }
+
+            container.innerHTML = "";
+            baseTotal = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                baseTotal += itemTotal;
+                const variantDisplay = (item.variant && item.variant !== 'Mặc định') ? `<div class="mini-variant">${item.variant}</div>` : '';
+
+                container.innerHTML += `
+                    <div class="mini-cart-item">
+                        <div class="mini-img-wrapper">
+                            <img src="${item.image}" alt="">
+                            <span class="mini-qty">${item.quantity}</span>
+                        </div>
+                        <div class="mini-info">
+                            <div class="mini-name">${item.name}</div>
+                            ${variantDisplay}
+                        </div>
+                        <div class="mini-price">${itemTotal.toLocaleString('vi-VN')} ₫</div>
+                    </div>
+                `;
+            });
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            finalTotal = baseTotal - discountApplied;
+            if(finalTotal < 0) finalTotal = 0;
+
+            document.getElementById('subTotal').innerText = baseTotal.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('finalTotal').innerText = finalTotal.toLocaleString('vi-VN') + ' ₫';
+        }
+
+        loadCheckoutCart();
+
+        // 2. MÃ GIẢM GIÁ
+        window.checkVoucher = function() {
+            const input = document.getElementById('voucherCode').value.trim();
+            const btn = document.getElementById('btnApplyVoucher');
+            if(input.length > 0) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+
+        window.applyVoucher = function() {
+            const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+            const msg = document.getElementById('voucherMsg');
+            const row = document.getElementById('discountRow');
+            const disVal = document.getElementById('discountValue');
+
+            if(code === 'MINT50K') {
+                discountApplied = 50000;
+                msg.style.color = '#00b894';
+                msg.innerText = '✅ Áp dụng mã thành công! Đã giảm 50.000đ';
+                row.style.display = 'flex';
+                disVal.innerText = '-50.000 ₫';
+                updateTotals();
+            } else if (code !== '') {
+                msg.style.color = '#ff4757';
+                msg.innerText = '❌ Mã khuyến mãi không hợp lệ hoặc đã hết hạn!';
+            }
+        }
+
+        // 3. NÚT ĐẶT HÀNG & LƯU FIREBASE
+        const btnPlaceOrder = document.getElementById('btnPlaceOrder');
+        const qrModal = document.getElementById('qrModal');
+        let orderDataToSave = {}; 
+
+        btnPlaceOrder.addEventListener('click', () => {
+            const name = document.getElementById('cusName').value.trim();
+            const phone = document.getElementById('cusPhone').value.trim();
+            const address = document.getElementById('cusAddress').value.trim();
+            const city = document.getElementById('cusCity').value.trim();
+            const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+
+            if (!name || !phone || !address || !city) {
+                alert("Vui lòng điền đầy đủ thông tin giao hàng!"); 
+                return;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('MintCart'));
+            const fullAddress = address + ", " + city;
+            
+            orderDataToSave = {
+                customerId: currentUserId,
+                customerName: name,
+                customerPhone: phone,
+                customerAddress: fullAddress,
+                items: cart, 
+                totalPrice: finalTotal,
+                paymentMethod: paymentType, 
+                status: (paymentType === 'COD') ? "Chờ xử lý" : "Chờ xác nhận thanh toán", 
+                createdAt: new Date()
+            };
+
+            if (paymentType === 'COD') {
+                submitOrderToFirebase();
+            } else {
+                showQRCode(phone);
+            }
+        });
+
+        function showQRCode(phone) {
+            const BANK_ID = "MB"; 
+            const ACCOUNT_NO = "0365467504"; 
+            const ACCOUNT_NAME = "VU THI TUYET NGAN"; 
+            const orderCode = "DH" + Math.floor(Math.random() * 10000); 
+            const transferContent = `${orderCode} ${phone}`; 
+
+            const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact.png?amount=${finalTotal}&addInfo=${transferContent}&accountName=${ACCOUNT_NAME}`;
+
+            document.getElementById('qrImage').src = qrUrl;
+            document.getElementById('qrAmount').innerText = finalTotal.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('qrContent').innerText = transferContent;
+            
+            qrModal.style.display = 'flex';
+        }
+
+        document.getElementById('btnConfirmTransfer').addEventListener('click', () => {
+            qrModal.style.display = 'none'; 
+            submitOrderToFirebase(); 
+        });
+
+        document.getElementById('btnCancelTransfer').addEventListener('click', () => {
+            qrModal.style.display = 'none';
+        });
+
+        async function submitOrderToFirebase() {
+            const msgEl = document.getElementById('checkoutMsg');
+            msgEl.style.color = "#ff7ea5";
+            msgEl.innerText = "⏳ Đang xử lý đơn hàng...";
+            btnPlaceOrder.disabled = true;
+
+            try {
+                await addDoc(collection(db, "orders"), orderDataToSave);
+                localStorage.removeItem('MintCart'); 
+                
+                const steps = document.querySelectorAll('.step');
+                if(steps.length > 2) steps[2].classList.add('active');
+
+                msgEl.style.color = "#00b894";
+                msgEl.innerText = "🎉 Đặt hàng thành công!";
+                
+                setTimeout(() => {
+                    alert("Cảm ơn bạn đã mua sắm tại Mint Cosmetics! Đơn hàng của bạn đang được xử lý.");
+                    window.location.href = "index.html";
+                }, 1500);
+
+            } catch (error) {
+                msgEl.style.color = "red";
+                msgEl.innerText = "❌ Lỗi: " + error.message;
+                btnPlaceOrder.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
